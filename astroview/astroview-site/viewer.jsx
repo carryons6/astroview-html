@@ -1,5 +1,10 @@
 /* global React, AV_SITE_META */
-const { useState: useStateV, useEffect: useEffectV, useRef: useRefV, useMemo: useMemoV } = React;
+const {
+  useState: useStateV,
+  useEffect: useEffectV,
+  useRef: useRefV,
+  useMemo: useMemoV,
+} = React;
 
 const REAL_SOURCES = [
   { id: 1, x: 49.302, y: 59.46, flux: 7276.769, a: 1.28, b: 1.193, theta: 1.5694 },
@@ -18,14 +23,19 @@ const REAL_SOURCES = [
 ];
 
 const IMG_SIZE = 512;
+const DASH = '-';
 
 function applyStretch(v, mode) {
   const x = Math.max(0, Math.min(1, v));
   switch (mode) {
-    case 'log': return Math.log10(1 + 9 * x);
-    case 'asinh': return Math.asinh(10 * x) / Math.asinh(10);
-    case 'sqrt': return Math.sqrt(x);
-    default: return x;
+    case 'log':
+      return Math.log10(1 + 9 * x);
+    case 'asinh':
+      return Math.asinh(10 * x) / Math.asinh(10);
+    case 'sqrt':
+      return Math.sqrt(x);
+    default:
+      return x;
   }
 }
 
@@ -33,18 +43,57 @@ function computeInterval(lumArr, mode) {
   const n = lumArr.length;
   const sorted = Float32Array.from(lumArr).sort();
   const pick = (p) => sorted[Math.max(0, Math.min(n - 1, Math.floor(n * p)))];
+
   switch (mode) {
-    case 'zscale': return [pick(0.25), pick(0.985)];
-    case 'minmax': return [sorted[0], sorted[n - 1]];
-    case '995': return [pick(0.005), pick(0.995)];
-    case '99': return [pick(0.01), pick(0.99)];
-    case '98': return [pick(0.02), pick(0.98)];
-    case '95': return [pick(0.05), pick(0.95)];
-    default: return [sorted[0], sorted[n - 1]];
+    case 'zscale':
+      return [pick(0.25), pick(0.985)];
+    case 'minmax':
+      return [sorted[0], sorted[n - 1]];
+    case '995':
+      return [pick(0.005), pick(0.995)];
+    case '99':
+      return [pick(0.01), pick(0.99)];
+    case '98':
+      return [pick(0.02), pick(0.98)];
+    case '95':
+      return [pick(0.05), pick(0.95)];
+    default:
+      return [sorted[0], sorted[n - 1]];
   }
 }
 
+function getViewerCopy(lang) {
+  if (lang === 'zh') {
+    return {
+      headerButtonTitle: '查看 FITS 头信息',
+      sourceTableTitle: `源表 (${REAL_SOURCES.length})`,
+      cursorTitle: '光标',
+      nearTitle: '最近源',
+      sourcesOn: `显示源标记 (${REAL_SOURCES.length})`,
+      sourcesOff: '隐藏源标记',
+      cropLabel: '真实 FITS 裁剪',
+      searchPlaceholder: '搜索关键词...',
+      cardsLabel: (shown, total) => `显示 ${shown} / ${total} 张卡片`,
+      closeLabel: '关闭',
+    };
+  }
+
+  return {
+    headerButtonTitle: 'View FITS header',
+    sourceTableTitle: `Source Table (${REAL_SOURCES.length})`,
+    cursorTitle: 'Cursor',
+    nearTitle: 'Near',
+    sourcesOn: `${REAL_SOURCES.length} sources ON`,
+    sourcesOff: 'Sources OFF',
+    cropLabel: 'real FITS crop',
+    searchPlaceholder: 'Search keywords...',
+    cardsLabel: (shown, total) => `${shown} / ${total} cards`,
+    closeLabel: 'close',
+  };
+}
+
 function ViewerDemo({ t, lang }) {
+  const copy = getViewerCopy(lang);
   const canvasRef = useRefV(null);
   const [stretch, setStretch] = useStateV('asinh');
   const [intervalMode, setIntervalMode] = useStateV('zscale');
@@ -57,7 +106,9 @@ function ViewerDemo({ t, lang }) {
 
   useEffectV(() => {
     if (!showHeader) return undefined;
-    const onKey = (e) => { if (e.key === 'Escape') setShowHeader(false); };
+    const onKey = (e) => {
+      if (e.key === 'Escape') setShowHeader(false);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [showHeader]);
@@ -83,6 +134,7 @@ function ViewerDemo({ t, lang }) {
 
   useEffectV(() => {
     if (!rawLum || !canvasRef.current) return;
+
     const cv = canvasRef.current;
     cv.width = IMG_SIZE;
     cv.height = IMG_SIZE;
@@ -90,6 +142,7 @@ function ViewerDemo({ t, lang }) {
     const out = ctx.createImageData(IMG_SIZE, IMG_SIZE);
     const [lo, hi] = computeInterval(rawLum, intervalMode);
     const span = Math.max(1e-6, hi - lo);
+
     for (let j = 0; j < rawLum.length; j += 1) {
       const n = (rawLum[j] - lo) / span;
       const v = applyStretch(n, stretch);
@@ -99,6 +152,7 @@ function ViewerDemo({ t, lang }) {
       out.data[j * 4 + 2] = g;
       out.data[j * 4 + 3] = 255;
     }
+
     ctx.putImageData(out, 0, 0);
   }, [rawLum, stretch, intervalMode]);
 
@@ -122,71 +176,112 @@ function ViewerDemo({ t, lang }) {
     setHoverSrc(best);
   };
 
-  const intervalLabels = [['ZScale', 'zscale'], ['MinMax', 'minmax'], ['99.5%', '995'], ['99%', '99'], ['98%', '98'], ['95%', '95']];
+  const intervalLabels = [
+    ['ZScale', 'zscale'],
+    ['MinMax', 'minmax'],
+    ['99.5%', '995'],
+    ['99%', '99'],
+    ['98%', '98'],
+    ['95%', '95'],
+  ];
   const fmt = (n, d = 2) => Number(n).toFixed(d);
   const fmtFlux = (n) => (n >= 1e6 ? `${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}k` : n.toFixed(0));
-  const dash = '—';
 
-  return React.createElement('div', { className: 'viewer' },
-    React.createElement('div', { className: 'viewer-top' },
-      React.createElement('div', { className: 'dots' },
-        React.createElement('span', { className: 'dot' }),
-        React.createElement('span', { className: 'dot' }),
-        React.createElement('span', { className: 'dot' }),
+  return React.createElement(
+    'div',
+    { className: 'viewer' },
+    React.createElement(
+      'div',
+      { className: 'viewer-top' },
+      React.createElement(
+        'div',
+        { className: 'viewer-appbadge', 'aria-hidden': 'true' },
+        React.createElement('span', { className: 'viewer-appbadge-mark' }, 'A'),
+        React.createElement('span', { className: 'viewer-appbadge-label' }, 'Preview'),
       ),
-      React.createElement('span', { className: 'title' },
-        React.createElement('span', { style: { opacity: 0.55, marginRight: 6 } }, 'AstroView ·'),
+      React.createElement(
+        'span',
+        { className: 'title' },
+        React.createElement('span', { className: 'prefix' }, 'AstroView'),
         React.createElement('span', { className: 'fname mono' }, 'first_light_no_cry.fits'),
         React.createElement('span', { className: 'fmeta mono' }, '[HDU 0 | 512x512 | float32]'),
       ),
-      React.createElement('button', {
-        className: 'viewer-header-btn',
-        onClick: () => setShowHeader(true),
-        title: lang === 'zh' ? '查看 FITS Header' : 'View FITS Header',
-      },
-        React.createElement('svg', { width: 11, height: 11, viewBox: '0 0 11 11', fill: 'none', stroke: 'currentColor', strokeWidth: 1.3 },
-          React.createElement('path', { d: 'M2 2h7v7H2zM2 4h7M4 2v7' })),
+      React.createElement(
+        'button',
+        {
+          className: 'viewer-header-btn',
+          onClick: () => setShowHeader(true),
+          title: copy.headerButtonTitle,
+        },
+        React.createElement(
+          'svg',
+          { width: 11, height: 11, viewBox: '0 0 11 11', fill: 'none', stroke: 'currentColor', strokeWidth: 1.3 },
+          React.createElement('path', { d: 'M2 2h7v7H2zM2 4h7M4 2v7' }),
+        ),
         React.createElement('span', null, 'Header'),
       ),
     ),
     showHeader && React.createElement(HeaderDialog, { onClose: () => setShowHeader(false), lang }),
-    React.createElement('div', { className: 'viewer-body' },
-      React.createElement('div', { className: 'viewer-canvas', onMouseMove: handleMove, onMouseLeave: () => { setHoverSrc(null); setHoverPx(null); } },
+    React.createElement(
+      'div',
+      { className: 'viewer-body' },
+      React.createElement(
+        'div',
+        {
+          className: 'viewer-canvas',
+          onMouseMove: handleMove,
+          onMouseLeave: () => {
+            setHoverSrc(null);
+            setHoverPx(null);
+          },
+        },
         React.createElement('canvas', {
           ref: canvasRef,
           style: { width: '100%', height: '100%', display: 'block', imageRendering: 'pixelated' },
         }),
-        showSources && React.createElement('svg', {
-          viewBox: `0 0 ${IMG_SIZE} ${IMG_SIZE}`,
-          preserveAspectRatio: 'none',
-          style: { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' },
-        },
-          REAL_SOURCES.map((s) => {
-            const isSel = selSrc === s.id;
-            const isHover = hoverSrc === s.id;
-            return React.createElement('g', { key: s.id, transform: `translate(${s.x} ${s.y}) rotate(${s.theta * 180 / Math.PI})` },
-              React.createElement('ellipse', {
-                cx: 0, cy: 0,
-                rx: Math.max(4, s.a * 3.5), ry: Math.max(3, s.b * 3.5),
-                fill: 'none',
-                stroke: isSel ? 'oklch(75% 0.18 60)' : isHover ? 'oklch(80% 0.15 200)' : 'oklch(70% 0.18 25 / 0.85)',
-                strokeWidth: isSel ? 2 : 1.2,
-              }),
-            );
-          }),
-          selSrc && (() => {
-            const s = REAL_SOURCES.find((x) => x.id === selSrc);
-            if (!s) return null;
-            return React.createElement('g', null,
-              React.createElement('line', { x1: s.x - 14, y1: s.y, x2: s.x - 6, y2: s.y, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
-              React.createElement('line', { x1: s.x + 6, y1: s.y, x2: s.x + 14, y2: s.y, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
-              React.createElement('line', { x1: s.x, y1: s.y - 14, x2: s.x, y2: s.y - 6, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
-              React.createElement('line', { x1: s.x, y1: s.y + 6, x2: s.x, y2: s.y + 14, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
-            );
-          })(),
-        ),
+        showSources &&
+          React.createElement(
+            'svg',
+            {
+              viewBox: `0 0 ${IMG_SIZE} ${IMG_SIZE}`,
+              preserveAspectRatio: 'none',
+              style: { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' },
+            },
+            REAL_SOURCES.map((s) => {
+              const isSel = selSrc === s.id;
+              const isHover = hoverSrc === s.id;
+              return React.createElement(
+                'g',
+                { key: s.id, transform: `translate(${s.x} ${s.y}) rotate(${(s.theta * 180) / Math.PI})` },
+                React.createElement('ellipse', {
+                  cx: 0,
+                  cy: 0,
+                  rx: Math.max(4, s.a * 3.5),
+                  ry: Math.max(3, s.b * 3.5),
+                  fill: 'none',
+                  stroke: isSel ? 'oklch(75% 0.18 60)' : isHover ? 'oklch(80% 0.15 200)' : 'oklch(70% 0.18 25 / 0.85)',
+                  strokeWidth: isSel ? 2 : 1.2,
+                }),
+              );
+            }),
+            selSrc &&
+              (() => {
+                const s = REAL_SOURCES.find((x) => x.id === selSrc);
+                if (!s) return null;
+                return React.createElement(
+                  'g',
+                  null,
+                  React.createElement('line', { x1: s.x - 14, y1: s.y, x2: s.x - 6, y2: s.y, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
+                  React.createElement('line', { x1: s.x + 6, y1: s.y, x2: s.x + 14, y2: s.y, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
+                  React.createElement('line', { x1: s.x, y1: s.y - 14, x2: s.x, y2: s.y - 6, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
+                  React.createElement('line', { x1: s.x, y1: s.y + 6, x2: s.x, y2: s.y + 14, stroke: 'oklch(80% 0.18 60)', strokeWidth: 1.5 }),
+                );
+              })(),
+          ),
         React.createElement('div', { className: 'viewer-badge' }, t.viewer.badge),
-        React.createElement('svg', { className: 'viewer-compass', viewBox: '0 0 52 52' },
+        React.createElement(
+          'svg',
+          { className: 'viewer-compass', viewBox: '0 0 52 52' },
           React.createElement('circle', { cx: 26, cy: 26, r: 22, fill: 'oklch(20% 0.01 260 / 0.6)', stroke: 'oklch(60% 0.05 250 / 0.5)' }),
           React.createElement('line', { x1: 26, y1: 26, x2: 26, y2: 8, stroke: 'oklch(70% 0.12 60)', strokeWidth: 1.4 }),
           React.createElement('line', { x1: 26, y1: 26, x2: 44, y2: 26, stroke: 'oklch(70% 0.12 250)', strokeWidth: 1.4 }),
@@ -194,84 +289,152 @@ function ViewerDemo({ t, lang }) {
           React.createElement('text', { x: 48, y: 28, fontSize: 7, fill: 'oklch(85% 0.12 250)', textAnchor: 'middle', fontFamily: 'JetBrains Mono' }, '+X'),
         ),
       ),
-      React.createElement('div', { className: 'viewer-panel' },
+      React.createElement(
+        'div',
+        { className: 'viewer-panel' },
         React.createElement('h4', null, t.viewer.controls.stretch),
-        React.createElement('div', { className: 'viewer-row' },
+        React.createElement(
+          'div',
+          { className: 'viewer-row' },
           ['linear', 'log', 'asinh', 'sqrt'].map((m) =>
-            React.createElement('button', {
-              key: m, className: 'viewer-btn' + (stretch === m ? ' active' : ''),
-              onClick: () => setStretch(m),
-            }, m))),
-        React.createElement('h4', null, t.viewer.controls.interval),
-        React.createElement('div', { className: 'viewer-row' },
-          intervalLabels.slice(0, 3).map(([label, value]) =>
-            React.createElement('button', {
-              key: value, className: 'viewer-btn' + (intervalMode === value ? ' active' : ''),
-              onClick: () => setIntervalMode(value),
-            }, label))),
-        React.createElement('div', { className: 'viewer-row' },
-          intervalLabels.slice(3).map(([label, value]) =>
-            React.createElement('button', {
-              key: value, className: 'viewer-btn' + (intervalMode === value ? ' active' : ''),
-              onClick: () => setIntervalMode(value),
-            }, label))),
-        React.createElement('h4', null, lang === 'zh' ? `源表 (${REAL_SOURCES.length})` : `Source Table (${REAL_SOURCES.length})`),
-        React.createElement('div', { style: { maxHeight: 180, overflowY: 'auto', border: '1px solid oklch(25% 0.01 260)', borderRadius: 3 } },
-          React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', fontSize: 9.5, fontFamily: 'JetBrains Mono' } },
-            React.createElement('thead', null,
-              React.createElement('tr', { style: { background: 'oklch(22% 0.01 260)', color: 'oklch(60% 0.01 260)' } },
-                ['ID', 'X', 'Y', 'Flux'].map((h) => React.createElement('th', {
-                  key: h, style: { padding: '4px 6px', textAlign: 'left', fontWeight: 500, borderBottom: '1px solid oklch(28% 0.01 260)' },
-                }, h)),
-              ),
-            ),
-            React.createElement('tbody', null,
-              REAL_SOURCES.map((s) => React.createElement('tr', {
-                key: s.id,
-                onClick: () => setSelSrc(s.id),
-                onMouseEnter: () => setHoverSrc(s.id),
-                onMouseLeave: () => setHoverSrc(null),
-                style: {
-                  cursor: 'pointer',
-                  background: selSrc === s.id ? 'oklch(55% 0.15 250 / 0.25)' : hoverSrc === s.id ? 'oklch(25% 0.01 260)' : 'transparent',
-                  color: selSrc === s.id ? 'oklch(92% 0.02 250)' : 'oklch(80% 0.01 260)',
-                },
+            React.createElement(
+              'button',
+              {
+                key: m,
+                className: 'viewer-btn' + (stretch === m ? ' active' : ''),
+                onClick: () => setStretch(m),
               },
-                React.createElement('td', { style: { padding: '3px 6px' } }, s.id),
-                React.createElement('td', { style: { padding: '3px 6px' } }, fmt(s.x, 1)),
-                React.createElement('td', { style: { padding: '3px 6px' } }, fmt(s.y, 1)),
-                React.createElement('td', { style: { padding: '3px 6px' } }, fmtFlux(s.flux)),
-              )),
+              m,
             ),
           ),
         ),
-        React.createElement('h4', null, lang === 'zh' ? '光标' : 'Cursor'),
-        React.createElement('div', { className: 'viewer-kv' },
+        React.createElement('h4', null, t.viewer.controls.interval),
+        React.createElement(
+          'div',
+          { className: 'viewer-row' },
+          intervalLabels.slice(0, 3).map(([label, value]) =>
+            React.createElement(
+              'button',
+              {
+                key: value,
+                className: 'viewer-btn' + (intervalMode === value ? ' active' : ''),
+                onClick: () => setIntervalMode(value),
+              },
+              label,
+            ),
+          ),
+        ),
+        React.createElement(
+          'div',
+          { className: 'viewer-row' },
+          intervalLabels.slice(3).map(([label, value]) =>
+            React.createElement(
+              'button',
+              {
+                key: value,
+                className: 'viewer-btn' + (intervalMode === value ? ' active' : ''),
+                onClick: () => setIntervalMode(value),
+              },
+              label,
+            ),
+          ),
+        ),
+        React.createElement('h4', null, copy.sourceTableTitle),
+        React.createElement(
+          'div',
+          {
+            style: {
+              maxHeight: 180,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              border: '1px solid oklch(25% 0.01 260)',
+              borderRadius: 3,
+            },
+          },
+          React.createElement(
+            'table',
+            { style: { width: '100%', borderCollapse: 'collapse', fontSize: 9.5, fontFamily: 'JetBrains Mono' } },
+            React.createElement(
+              'thead',
+              null,
+              React.createElement(
+                'tr',
+                { style: { background: 'oklch(22% 0.01 260)', color: 'oklch(60% 0.01 260)' } },
+                ['ID', 'X', 'Y', 'Flux'].map((h) =>
+                  React.createElement(
+                    'th',
+                    {
+                      key: h,
+                      style: { padding: '4px 6px', textAlign: 'left', fontWeight: 500, borderBottom: '1px solid oklch(28% 0.01 260)' },
+                    },
+                    h,
+                  ),
+                ),
+              ),
+            ),
+            React.createElement(
+              'tbody',
+              null,
+              REAL_SOURCES.map((s) =>
+                React.createElement(
+                  'tr',
+                  {
+                    key: s.id,
+                    onClick: () => setSelSrc(s.id),
+                    onMouseEnter: () => setHoverSrc(s.id),
+                    onMouseLeave: () => setHoverSrc(null),
+                    style: {
+                      cursor: 'pointer',
+                      background: selSrc === s.id ? 'oklch(55% 0.15 250 / 0.25)' : hoverSrc === s.id ? 'oklch(25% 0.01 260)' : 'transparent',
+                      color: selSrc === s.id ? 'oklch(92% 0.02 250)' : 'oklch(80% 0.01 260)',
+                    },
+                  },
+                  React.createElement('td', { style: { padding: '3px 6px' } }, s.id),
+                  React.createElement('td', { style: { padding: '3px 6px' } }, fmt(s.x, 1)),
+                  React.createElement('td', { style: { padding: '3px 6px' } }, fmt(s.y, 1)),
+                  React.createElement('td', { style: { padding: '3px 6px' } }, fmtFlux(s.flux)),
+                ),
+              ),
+            ),
+          ),
+        ),
+        React.createElement('h4', null, copy.cursorTitle),
+        React.createElement(
+          'div',
+          { className: 'viewer-kv' },
           React.createElement('span', { className: 'k' }, 'x, y'),
-          React.createElement('span', { className: 'v' }, hoverPx ? `${hoverPx.x}, ${hoverPx.y}` : dash),
+          React.createElement('span', { className: 'v' }, hoverPx ? `${hoverPx.x}, ${hoverPx.y}` : DASH),
         ),
-        React.createElement('div', { className: 'viewer-kv' },
-          React.createElement('span', { className: 'k' }, lang === 'zh' ? '最近源' : 'Near'),
-          React.createElement('span', { className: 'v' }, hoverSrc ? `#${hoverSrc}` : dash),
+        React.createElement(
+          'div',
+          { className: 'viewer-kv' },
+          React.createElement('span', { className: 'k' }, copy.nearTitle),
+          React.createElement('span', { className: 'v' }, hoverSrc ? `#${hoverSrc}` : DASH),
         ),
-        React.createElement('div', { className: 'viewer-row', style: { marginTop: 10 } },
-          React.createElement('button', {
-            className: 'viewer-btn' + (showSources ? ' active' : ''),
-            onClick: () => setShowSources(!showSources),
-            style: { flex: 1 },
-          }, showSources
-            ? (lang === 'zh' ? `显示 ${REAL_SOURCES.length} 个源` : `${REAL_SOURCES.length} sources · ON`)
-            : (lang === 'zh' ? '源标记已关闭' : 'Sources OFF')),
+        React.createElement(
+          'div',
+          { className: 'viewer-row', style: { marginTop: 10 } },
+          React.createElement(
+            'button',
+            {
+              className: 'viewer-btn' + (showSources ? ' active' : ''),
+              onClick: () => setShowSources(!showSources),
+              style: { flex: 1 },
+            },
+            showSources ? copy.sourcesOn : copy.sourcesOff,
+          ),
         ),
       ),
     ),
-    React.createElement('div', { className: 'viewer-status' },
+    React.createElement(
+      'div',
+      { className: 'viewer-status' },
       React.createElement('span', null, '512x512'),
-      React.createElement('span', { className: 'dim' }, '·'),
+      React.createElement('span', { className: 'dim' }, '|'),
       React.createElement('span', null, `${stretch.toUpperCase()} / ${intervalMode.toUpperCase()}`),
-      React.createElement('span', { className: 'dim' }, '·'),
-      React.createElement('span', null, lang === 'zh' ? '真实 FITS 裁剪' : 'real FITS crop'),
-      React.createElement('span', { className: 'mode-badge' }, selSrc ? `#${selSrc}` : dash),
+      React.createElement('span', { className: 'dim' }, '|'),
+      React.createElement('span', null, copy.cropLabel),
+      React.createElement('span', { className: 'mode-badge' }, selSrc ? `#${selSrc}` : DASH),
     ),
   );
 }
@@ -284,8 +447,17 @@ function buildHeaderCards() {
   const d = (offsetMin) => new Date(startMs + offsetMin * 60 * 1000);
   const pad = (n) => String(n).padStart(2, '0');
   const iso = (dt) =>
-    dt.getUTCFullYear() + '-' + pad(dt.getUTCMonth() + 1) + '-' + pad(dt.getUTCDate()) +
-    'T' + pad(dt.getUTCHours()) + ':' + pad(dt.getUTCMinutes()) + ':' + pad(dt.getUTCSeconds());
+    dt.getUTCFullYear() +
+    '-' +
+    pad(dt.getUTCMonth() + 1) +
+    '-' +
+    pad(dt.getUTCDate()) +
+    'T' +
+    pad(dt.getUTCHours()) +
+    ':' +
+    pad(dt.getUTCMinutes()) +
+    ':' +
+    pad(dt.getUTCSeconds());
   const local = (dt) => {
     const y = dt.getFullYear();
     const mo = pad(dt.getMonth() + 1);
@@ -353,6 +525,7 @@ function buildHeaderCards() {
 }
 
 function HeaderDialog({ onClose, lang }) {
+  const copy = getViewerCopy(lang);
   const cards = useMemoV(() => buildHeaderCards(), []);
   const [q, setQ] = useStateV('');
   const ql = q.toLowerCase();
@@ -362,30 +535,50 @@ function HeaderDialog({ onClose, lang }) {
     return `${c.kw} ${c.val} ${c.cm}`.toLowerCase().includes(ql);
   });
 
-  return React.createElement('div', { className: 'hdrdlg-backdrop', onClick: onClose },
-    React.createElement('div', { className: 'hdrdlg', onClick: (e) => e.stopPropagation() },
-      React.createElement('div', { className: 'hdrdlg-top' },
-        React.createElement('div', null,
+  return React.createElement(
+    'div',
+    { className: 'hdrdlg-backdrop', onClick: onClose },
+    React.createElement(
+      'div',
+      { className: 'hdrdlg', onClick: (e) => e.stopPropagation() },
+      React.createElement(
+        'div',
+        { className: 'hdrdlg-top' },
+        React.createElement(
+          'div',
+          null,
           React.createElement('div', { className: 'hdrdlg-title' }, 'FITS Header'),
           React.createElement('div', { className: 'hdrdlg-sub mono' }, `first_light_no_cry.fits | HDU 0 | PRIMARY | ${cards.length} cards`),
         ),
         React.createElement('input', {
           className: 'hdrdlg-search mono',
-          placeholder: lang === 'zh' ? '搜索关键字...' : 'Search keywords...',
+          placeholder: copy.searchPlaceholder,
           value: q,
           onChange: (e) => setQ(e.target.value),
         }),
         React.createElement('button', { className: 'hdrdlg-close', onClick: onClose }, '×'),
       ),
-      React.createElement('div', { className: 'hdrdlg-body' },
-        React.createElement('table', { className: 'hdrdlg-table mono' },
-          React.createElement('tbody', null,
+      React.createElement(
+        'div',
+        { className: 'hdrdlg-body' },
+        React.createElement(
+          'table',
+          { className: 'hdrdlg-table mono' },
+          React.createElement(
+            'tbody',
+            null,
             rows.map((c, i) => {
               if (!c.kw && !c.cm) {
-                return React.createElement('tr', { key: i, className: 'hdr-blank' },
-                  React.createElement('td', { colSpan: 3 }, '\u00A0'));
+                return React.createElement(
+                  'tr',
+                  { key: i, className: 'hdr-blank' },
+                  React.createElement('td', { colSpan: 3 }, '\u00A0'),
+                );
               }
-              return React.createElement('tr', { key: i, className: c.egg ? 'hdr-egg' : '' },
+
+              return React.createElement(
+                'tr',
+                { key: i, className: c.egg ? 'hdr-egg' : '' },
                 React.createElement('td', { className: 'hdr-kw' }, c.kw),
                 React.createElement('td', { className: 'hdr-val' }, c.val ? `= ${c.val}` : ''),
                 React.createElement('td', { className: 'hdr-cm' }, c.cm ? `/ ${c.cm}` : ''),
@@ -394,9 +587,11 @@ function HeaderDialog({ onClose, lang }) {
           ),
         ),
       ),
-      React.createElement('div', { className: 'hdrdlg-foot mono' },
-        React.createElement('span', null, lang === 'zh' ? `显示 ${rows.length} / ${cards.length} 张卡片` : `${rows.length} / ${cards.length} cards`),
-        React.createElement('span', { style: { opacity: 0.5 } }, `Esc / ${lang === 'zh' ? '关闭' : 'close'}`),
+      React.createElement(
+        'div',
+        { className: 'hdrdlg-foot mono' },
+        React.createElement('span', null, copy.cardsLabel(rows.length, cards.length)),
+        React.createElement('span', { style: { opacity: 0.5 } }, `Esc / ${copy.closeLabel}`),
       ),
     ),
   );

@@ -220,6 +220,7 @@ section.tight { padding: 64px 0; }
   gap: 72px;
   align-items: center;
 }
+.hero-grid > * { min-width: 0; }
 @media (max-width: 980px) {
   .hero-grid { grid-template-columns: 1fr; gap: 48px; }
 }
@@ -324,6 +325,8 @@ section.tight { padding: 64px 0; }
   display: grid;
   grid-template-rows: 36px 1fr 28px;
   min-height: 440px;
+  width: 100%;
+  min-width: 0;
   position: relative;
   color: oklch(85% 0.01 260);
   font-family: var(--mono);
@@ -339,18 +342,42 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   background: oklch(18% 0.01 260);
   font-size: 11px;
   color: oklch(70% 0.01 260);
+  min-width: 0;
 }
-.viewer-top .dots { display: flex; gap: 6px; }
-.viewer-top .dot { width: 10px; height: 10px; border-radius: 50%; background: oklch(35% 0.01 260); }
-.viewer-top .title { margin-left: 8px; }
-.viewer-top .menu { margin-left: auto; display: flex; gap: 18px; }
-.viewer-top .menu span { cursor: default; }
+.viewer-appbadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: oklch(24% 0.02 250);
+  border: 1px solid oklch(38% 0.06 250);
+  color: oklch(86% 0.03 250);
+  flex: 0 0 auto;
+}
+.viewer-appbadge-mark {
+  width: 14px; height: 14px;
+  display: inline-grid; place-items: center;
+  border-radius: 999px;
+  background: oklch(84% 0.05 250);
+  color: oklch(18% 0.02 250);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+.viewer-appbadge-label {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 9px;
+}
 .viewer-top .title {
-  margin-left: 4px;
+  margin-left: 0;
   display: flex; align-items: baseline; gap: 6px;
   color: oklch(78% 0.01 260);
   flex: 1; min-width: 0;
   overflow: hidden; white-space: nowrap;
+}
+.viewer-top .title .prefix {
+  color: oklch(60% 0.02 250);
+  flex: 0 0 auto;
 }
 .viewer-top .title .fname { font-size: 11px; color: oklch(82% 0.02 250); overflow: hidden; text-overflow: ellipsis; }
 .viewer-top .title .fmeta { font-size: 10px; color: oklch(50% 0.01 260); overflow: hidden; text-overflow: ellipsis; }
@@ -366,6 +393,7 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.15s;
+  flex: 0 0 auto;
 }
 .viewer-header-btn:hover {
   background: oklch(28% 0.02 250);
@@ -461,7 +489,7 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
 
 .viewer-body {
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: minmax(0, 1fr) minmax(188px, 220px);
   min-height: 0;
 }
 .viewer-canvas {
@@ -469,6 +497,7 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   overflow: hidden;
   background: oklch(8% 0.006 260);
   cursor: crosshair;
+  min-width: 0;
 }
 .viewer-canvas canvas { display: block; width: 100%; height: 100%; }
 .viewer-compass {
@@ -493,7 +522,9 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   background: oklch(16% 0.01 260);
   padding: 14px;
   overflow-y: auto;
+  overflow-x: hidden;
   font-size: 11px;
+  min-width: 0;
 }
 .viewer-panel h4 {
   font-size: 10px;
@@ -507,6 +538,7 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
 
 .viewer-row {
   display: flex; gap: 4px; margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 .viewer-btn {
   flex: 1;
@@ -519,6 +551,7 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.15s;
+  min-width: 0;
 }
 .viewer-btn:hover { border-color: oklch(40% 0.01 260); color: oklch(90% 0.01 260); }
 .viewer-btn.active {
@@ -559,6 +592,27 @@ html[data-theme="dark"] .viewer { box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0
   color: oklch(78% 0.1 250);
   border-radius: 2px;
   margin-left: auto;
+}
+@media (max-width: 1180px) {
+  .hero-grid { gap: 48px; align-items: start; }
+  .viewer { min-height: 420px; }
+  .viewer-body { grid-template-columns: minmax(0, 1fr) 192px; }
+  .viewer-panel { padding: 12px; }
+}
+@media (max-width: 1080px) {
+  .viewer-top { gap: 6px; }
+  .viewer-appbadge-label,
+  .viewer-top .title .prefix,
+  .viewer-header-btn span {
+    display: none;
+  }
+  .viewer-body { grid-template-columns: 1fr; }
+  .viewer-canvas { min-height: 320px; }
+  .viewer-panel {
+    border-left: none;
+    border-top: 1px solid oklch(25% 0.01 260);
+    max-height: 240px;
+  }
 }
 
 /* Viewer gallery (real screenshots) */

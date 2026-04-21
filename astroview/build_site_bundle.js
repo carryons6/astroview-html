@@ -26,9 +26,7 @@ function dataUrlFor(filePath, mime) {
 function extractOldBundleParts(html) {
   const manifestMatch = html.match(/<script type="__bundler\/manifest">\s*([\s\S]*?)\s*<\/script>/);
   const templateMatch = html.match(/<script type="__bundler\/template">\s*([\s\S]*?)\s*<\/script>/);
-  if (!manifestMatch || !templateMatch) {
-    throw new Error('Could not parse existing bundled AstroView.html');
-  }
+  if (!manifestMatch || !templateMatch) return null;
 
   return {
     manifest: JSON.parse(manifestMatch[1]),
@@ -44,12 +42,32 @@ function decodeManifestEntry(entry) {
   return buf.toString('utf8');
 }
 
-function pickRuntimeScripts(manifest, oldTemplate) {
+function pickRuntimeScriptsFromManifest(manifest, oldTemplate) {
   const srcs = [...oldTemplate.matchAll(/<script(?:[^>]*?) src="([^"]+)"/g)].map((m) => m[1]);
   if (srcs.length < 3) {
     throw new Error('Existing bundle did not expose the expected runtime scripts');
   }
   return srcs.slice(0, 3).map((uuid) => decodeManifestEntry(manifest[uuid]));
+}
+
+function pickRuntimeScriptsFromSingleFile(html) {
+  const scripts = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].map((match) => ({
+    attrs: match[1] || '',
+    body: match[2],
+  }));
+  const plainScripts = scripts.filter((script) => !/type="text\/babel"/.test(script.attrs));
+  if (plainScripts.length < 4) {
+    throw new Error('Existing single-file page did not expose the expected runtime scripts');
+  }
+  return plainScripts.slice(1, 4).map((script) => script.body.trim());
+}
+
+function pickRuntimeScripts(bundleHtml) {
+  const legacyBundle = extractOldBundleParts(bundleHtml);
+  if (legacyBundle) {
+    return pickRuntimeScriptsFromManifest(legacyBundle.manifest, legacyBundle.template);
+  }
+  return pickRuntimeScriptsFromSingleFile(bundleHtml);
 }
 
 function extractInlineAppScript(sourceIndex) {
@@ -70,8 +88,7 @@ function extractTweaksObject(sourceIndex) {
 
 function buildHtml() {
   const oldBundle = readUtf8(oldBundlePath);
-  const { manifest, template } = extractOldBundleParts(oldBundle);
-  const [reactText, reactDomText, babelText] = pickRuntimeScripts(manifest, template);
+  const [reactText, reactDomText, babelText] = pickRuntimeScripts(oldBundle);
 
   const sourceIndex = readUtf8(path.join(siteDir, 'index.html'));
   const inlineAppScript = extractInlineAppScript(sourceIndex);
