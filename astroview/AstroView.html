@@ -34468,17 +34468,18 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 // AstroView landing page data, synced to upstream fitson changelog/release info.
 
 const SITE_META = {
-  latestVersion: '1.7.5',
+  latestVersion: '1.8.0',
   latestReleaseDate: '2026-07-25',
-  installerName: 'AstroView_Setup_1.7.5.exe',
-  installerSizeLabel: '50.8 MiB',
+  installerName: 'AstroView_Setup_1.8.0.exe',
+  installerSizeLabel: '50.9 MiB',
+  installerSha256: 'bbb988ffb01af236b4a10543c2fd2bd5122fd30af9dd5872a84fa15c6cfa48b1',
   repoUrl: 'https://github.com/carryons6/fitson',
-  releasesUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.7.5',
-  latestReleaseUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.7.5',
+  releasesUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.8.0',
+  latestReleaseUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.8.0',
   changelogUrl: 'https://github.com/carryons6/fitson/blob/main/CHANGELOG.md',
   environmentUrl: 'https://github.com/carryons6/fitson/blob/main/environment-win-64.conda.lock',
-  installerUrl: 'https://github.com/carryons6/fitson/releases/download/v1.7.5/AstroView_Setup_1.7.5.exe',
-  checksumUrl: 'https://github.com/carryons6/fitson/releases/download/v1.7.5/SHA256SUMS.txt',
+  installerUrl: 'https://github.com/carryons6/fitson/releases/download/v1.8.0/AstroView_Setup_1.8.0.exe',
+  checksumUrl: 'https://github.com/carryons6/fitson/releases/download/v1.8.0/SHA256SUMS.txt',
 };
 
 const PAPERS = [
@@ -34499,20 +34500,20 @@ const I18N = {
       title_a: 'A fast, precise FITS viewer for',
       title_em: 'astronomical imaging',
       title_b: '.',
-      desc: 'Open bounded FITS image HDUs and cubes, inspect SEP background and residual views, mark pixel or WCS coordinates, and stay responsive with request-safe single-flight workers.',
-      cta_download: 'Download v1.7.5',
+      desc: 'Measure ROIs and apertures, overlay an RA/Dec grid and Gaia DR3 sources, exchange DS9 Regions, and compare FITS frames without leaving a fast, bounded desktop workflow.',
+      cta_download: 'Download v1.8.0',
       cta_github: 'View on GitHub',
       meta: [
-        { v: '1.7.5', l: 'Current release' },
-        { v: '8x', l: 'D4 orientation transforms' },
-        { v: '~300 ms', l: 'Cold-start startup' },
-        { v: '50.8 MiB', l: 'Windows installer' },
+        { v: '1.8.0', l: 'Current release' },
+        { v: 'ROI + aperture', l: 'Measurement workbench' },
+        { v: 'Gaia DR3', l: 'Bounded catalog overlay' },
+        { v: SITE_META.installerSizeLabel, l: 'Windows installer' },
       ],
     },
     features: {
       eyebrow: 'Capabilities',
       title: 'Built around the real loop of observational work.',
-      desc: 'The page focuses on the sequence users actually repeat: open FITS, inspect pixels, extract sources, step frames, and export what matters.',
+      desc: 'AstroView now carries the workflow from first inspection through lightweight measurement, sky context, interoperable regions, and frame-to-frame comparison.',
       items: [
         {
           n: '01',
@@ -34522,33 +34523,45 @@ const I18N = {
         },
         {
           n: '02',
-          t: 'Source Extraction (SEP)',
-          d: 'Run SEP on the whole image or on a right-drag ROI, tune threshold / min area / deblend / background mesh, and inspect results without freezing the app.',
-          list: ['Full-image and ROI extraction', 'Cancelable subprocess execution', 'Intensity · Background · Residual · Connected Region'],
+          t: 'Measurement & Photometry',
+          d: 'Turn a selected ROI into bounded pixel statistics, then measure a circular aperture with an annular background estimate and immediate on-canvas feedback.',
+          list: ['Min · max · mean · median · standard deviation · sum', 'Net flux · uncertainty · SNR', 'Centroid · FWHM · peak above background'],
         },
         {
           n: '03',
-          t: 'Coordinate Markers',
-          d: 'Place markers from pixel coordinates or WCS coordinates, add one by one or batch paste, and keep imported markers visually distinct from detected sources.',
-          list: ['Pixel and WCS input', 'Batch paste with line-level validation', 'Independent styling for imported vs detected markers'],
+          t: 'WCS & Gaia DR3',
+          d: 'Draw a projected RA/Dec grid on celestial-WCS frames and run a bounded Gaia DR3 cone search around the current field.',
+          list: ['RA/Dec grid with sky-coordinate labels', 'Radius, row-count, and faint-G limits', 'Selectable Gaia markers projected onto the image'],
         },
         {
           n: '04',
-          t: 'Multi-Frame Playback',
-          d: 'Treat a folder or selection of FITS files as an ordered sequence, then play, loop, bounce, or step frames while a background render queue fills the cache.',
-          list: ['Append frames to the current session', '[ and ] keyboard stepping', 'Preview-first rendering for large frames'],
+          t: 'DS9 Region Interoperability',
+          d: 'Import, inspect, overlay, and export bounded DS9 Region 4.1 documents, or capture the current ROI and aperture into the region list.',
+          list: ['image · physical · fk5 · icrs', 'circle · box · ellipse · polygon · point', 'Labels, colors, include/exclude, and safe round-trip export'],
         },
         {
           n: '05',
-          t: 'Workspace & Header Viewer',
-          d: 'Every dock can float or dock cleanly, and the header dialog now supports HDU switching, search, raw-text fallback, and copy actions.',
-          list: ['Versioned, resettable workspace layout', 'Searchable FITS header dialog', 'Dock/undock title bars with native floating-window controls'],
+          t: 'Image Comparison',
+          d: 'Choose two loaded frames and compare them with shared display limits, either directly by pixel or after bounded nearest-neighbour WCS alignment.',
+          list: ['Side by side · blink · A − B difference', 'Automatic, direct-pixel, or WCS alignment', 'Cancelable background comparison with output budgets'],
         },
         {
           n: '06',
-          t: 'Performance',
-          d: 'AstroView combines safe memory-map detachment, deferred imports, subsampled intervals, and global single-flight load, render, and background workers so repeated actions stay bounded.',
-          list: ['Global single-flight workers with cooperative cancellation', 'Subsample to ~1000x1000 for interval estimation', 'Exact win-64 URL+SHA release lock'],
+          t: 'Source Extraction (SEP)',
+          d: 'Run SEP on the whole image or a right-drag ROI, tune detection and background parameters, and inspect catalogs and cutouts without freezing the app.',
+          list: ['Full-image and ROI extraction', 'Cancelable subprocess execution', 'Intensity · Background · Residual · Connected Region'],
+        },
+        {
+          n: '07',
+          t: 'Frames & Workspace',
+          d: 'Play, loop, bounce, or step through an ordered FITS sequence while keeping dock layout, searchable headers, source tables, and session state close at hand.',
+          list: ['Append frames to the current session', 'Preview-first background rendering', 'Versioned workspace and structured Header viewer'],
+        },
+        {
+          n: '08',
+          t: 'Performance & Safety',
+          d: 'New analysis, catalog, region, and comparison paths keep explicit file, network, pixel, memory, row, geometry, and cancellation budgets.',
+          list: ['Request-safe single-flight workers', 'Bounded remote and local inputs', 'Exact win-64 URL+SHA release environment lock'],
         },
       ],
     },
@@ -34564,6 +34577,7 @@ const I18N = {
       title: 'Release notes',
       desc: 'Select a recent version for a quick summary, then scroll for the longer condensed history below.',
       summaryByVersion: {
+        '1.8.0': 'AstroView 1.8.0 adds a lightweight scientific-analysis layer: ROI statistics and aperture photometry, projected WCS grids with bounded Gaia DR3 overlays, safe DS9 Region import/export, and side-by-side, blink, or difference comparison between loaded frames.',
         '1.7.5': 'This security-focused release bounds FITS decoding before allocation, rejects unsafe whole-file compression wrappers and unsupported HDUs, prevents stale or canceled worker results from reaching the UI, and hardens reproducible Windows releases with exact locks and SHA-256 checksums.',
         '1.7.4': 'First-image loading and frame rendering are faster after removing redundant preview and interval passes. Frozen Windows builds now initialize multiprocessing correctly and package local modules reliably.',
         '1.7.3': 'Windows packaging now prefers OpenBLAS and auto-detects the active BLAS backend, cutting the installer to roughly 47 MB. It also fixes a Windows-only empty-window bug when `python -m astroview` is launched from inside the package directory.',
@@ -34591,7 +34605,7 @@ const I18N = {
         {
           t: 'Or install the release build',
           d: 'The Windows installer and SHA256SUMS.txt come from the verified GitHub release workflow.',
-          code: '$ .\\AstroView_Setup_1.7.5.exe\n# Verify SHA256SUMS.txt, then launch from Start menu.',
+          code: '$ .\\AstroView_Setup_1.8.0.exe\n# Verify SHA256SUMS.txt, then launch from Start menu.',
         },
       ],
     },
@@ -34602,11 +34616,15 @@ const I18N = {
       rows: [
         { k: 'Runtime', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep (required)'] },
         { k: 'OS', v: 'Windows 10/11, macOS 12+, Linux (X11 / Wayland)', tags: [] },
-        { k: 'File formats', v: 'FITS image HDUs (.fits, .fit, .fts): 2D images and bounded cubes in single- or multi-HDU files. Empty, table, and 1D HDUs are rejected. Export targets include:', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: 'File formats', v: 'FITS image HDUs (.fits, .fit, .fts): 2D images and bounded cubes in single- or multi-HDU files. Empty, table, and 1D HDUs are rejected. Interchange and export targets include:', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV', 'DS9 .reg'] },
         { k: 'Safety limits', v: 'Desktop defaults: 8192² total pixels, 512 MiB estimated decoded data, and 4096 frames.', tags: [] },
         { k: 'Compression', v: 'FITS tile compression (CompImageHDU) remains supported within the limits. Whole-file gzip/ZIP/bzip2/xz/LZW wrappers must be safely decompressed first.', tags: [] },
         { k: 'Stretch modes', v: '', tags: ['Linear', 'Log', 'Asinh', 'Sqrt'] },
         { k: 'Interval modes', v: '', tags: ['ZScale', 'MinMax', '99.5%', '99%', '98%', '95%', 'Manual'] },
+        { k: 'Measurement', v: 'Bounded ROI statistics and circular-aperture photometry with an annular background, uncertainty, SNR, centroid, and FWHM.', tags: [] },
+        { k: 'WCS & catalog', v: 'Projected RA/Dec grid plus a bounded Gaia DR3 cone search with configurable radius, result count, and faint-G limit.', tags: [] },
+        { k: 'DS9 Regions', v: 'Safe Region 4.1 import/export for image, physical, fk5, and icrs coordinates; circle, box, ellipse, polygon, and point shapes.', tags: [] },
+        { k: 'Image comparison', v: 'Side-by-side, blink, and A − B difference modes with direct-pixel or bounded nearest-neighbour WCS alignment.', tags: [] },
         { k: 'Coordinate input', v: 'Pixel (x, y) and WCS (RA, Dec), with single-entry and batch-paste workflows.', tags: [] },
         { k: 'Source extraction', v: 'SEP-based extraction with tunable threshold, min area, deblend, and background mesh. Supports full image or ROI.', tags: [] },
         { k: 'Architecture', v: 'Qt-agnostic `core/` domain logic plus `app/` UI layer; `MainWindow` stays the sole coordinator.', tags: [] },
@@ -34614,10 +34632,10 @@ const I18N = {
       ],
       download: {
         title: 'Download AstroView',
-        sub: 'v1.7.5 · Released July 25, 2026',
+        sub: 'v1.8.0 · Released July 25, 2026',
         items: [
-          { os: 'Win', title: 'AstroView_Setup_1.7.5.exe', meta: 'Installer · x64 · 50.8 MiB', href: SITE_META.installerUrl },
-          { os: 'SHA', title: 'SHA256SUMS.txt', meta: 'SHA-256 · verify before installation', href: SITE_META.checksumUrl },
+          { os: 'Win', title: SITE_META.installerName, meta: `Installer · x64 · ${SITE_META.installerSizeLabel}`, href: SITE_META.installerUrl },
+          { os: 'SHA', title: 'SHA256SUMS.txt', meta: `SHA-256 · ${SITE_META.installerSha256}`, href: SITE_META.checksumUrl },
           { os: 'Rel', title: 'Release page', meta: 'GitHub release notes · checksums · assets', href: SITE_META.latestReleaseUrl },
           { os: 'Env', title: 'environment-win-64.conda.lock', meta: 'Exact Conda URLs · builds · SHA-256', href: SITE_META.environmentUrl },
         ],
@@ -34630,7 +34648,7 @@ const I18N = {
     },
     footer: {
       license: 'MIT License',
-      note: 'Built with PySide6. Landing-page release data synced through 1.7.5 on July 25, 2026.',
+      note: 'Built with PySide6. Landing-page release data synced through 1.8.0 on July 25, 2026.',
       links: [
         { t: 'GitHub', h: SITE_META.repoUrl },
         { t: 'Latest Release', h: SITE_META.latestReleaseUrl },
@@ -34649,20 +34667,20 @@ const I18N = {
       title_a: '面向',
       title_em: '天文成像',
       title_b: '的快速精确 FITS 查看器。',
-      desc: '支持有界的 FITS 图像 HDU 与数据立方体、SEP 背景/残差视图、像素与 WCS 坐标标记，并通过请求安全的 single-flight worker 保持响应。',
-      cta_download: '下载 v1.7.5',
+      desc: '在快速且有界的桌面工作流中完成 ROI 与孔径测量、WCS/盖亚 DR3 叠加、DS9 Region 互操作，以及 FITS 帧间比较。',
+      cta_download: '下载 v1.8.0',
       cta_github: '查看 GitHub',
       meta: [
-        { v: '1.7.5', l: '当前版本' },
-        { v: '8x', l: 'D4 图像方向变换' },
-        { v: '~300 ms', l: '冷启动时间' },
-        { v: '50.8 MiB', l: 'Windows 安装包' },
+        { v: '1.8.0', l: '当前版本' },
+        { v: 'ROI + 孔径', l: '测量工作台' },
+        { v: '盖亚 DR3', l: '有界星表叠加' },
+        { v: SITE_META.installerSizeLabel, l: 'Windows 安装包' },
       ],
     },
     features: {
       eyebrow: '能力概览',
       title: '围绕真实观测工作流设计。',
-      desc: '页面强调 AstroView 最常被重复使用的那条路径：打开 FITS、检查像素、提取源、浏览序列、导出结果。',
+      desc: 'AstroView 现在将工作流从初步查看延伸到轻量测量、天空背景信息、可互操作区域与帧间比较。',
       items: [
         {
           n: '01',
@@ -34672,33 +34690,45 @@ const I18N = {
         },
         {
           n: '02',
-          t: '源提取 (SEP)',
-          d: '可在全图或右键拖选 ROI 上运行 SEP，自定义阈值、最小面积、反混叠与背景网格参数，并保持交互响应。',
-          list: ['全图与 ROI 提取', '可取消的子进程执行', 'Intensity · Background · Residual · Connected Region'],
+          t: '测量与孔径测光',
+          d: '将选定 ROI 转换为有界像素统计，并通过背景环估计完成圆形孔径测光，同时在画布上即时显示测量范围。',
+          list: ['最小值 · 最大值 · 均值 · 中位数 · 标准差 · 总和', '净流量 · 不确定度 · 信噪比', '质心 · FWHM · 背景以上峰值'],
         },
         {
           n: '03',
-          t: '坐标标记',
-          d: '支持像素坐标与 WCS 坐标，既能逐条添加，也能批量粘贴，并可将导入标记与检测源分开设定样式。',
-          list: ['像素与 WCS 输入', '逐行校验的批量粘贴', '导入标记 / 检测源独立样式'],
+          t: 'WCS 与盖亚 DR3',
+          d: '在包含天球 WCS 的帧上绘制投影后的 RA/Dec 网格，并围绕当前视场执行有界的盖亚 DR3 锥形检索。',
+          list: ['带天球坐标标签的 RA/Dec 网格', '半径、返回数量与暗端 G 星等限制', '投影到图像且可选择的盖亚源标记'],
         },
         {
           n: '04',
-          t: '多帧播放',
-          d: '将多张 FITS 组成有序序列，播放、循环、往返或逐帧切换，同时后台渲染队列持续填充缓存。',
-          list: ['向当前会话追加帧', '[ 与 ] 键盘切帧', '大图优先预览后补全渲染'],
+          t: 'DS9 Region 互操作',
+          d: '导入、检查、叠加和导出有界的 DS9 Region 4.1 文档，也可把当前 ROI 与孔径直接加入区域列表。',
+          list: ['image · physical · fk5 · icrs', 'circle · box · ellipse · polygon · point', '标签、颜色、包含/排除与安全往返导出'],
         },
         {
           n: '05',
-          t: '工作区与 Header 查看器',
-          d: '各个 dock 既可停靠也可浮动；FITS Header 对话框支持 HDU 切换、搜索、原始文本回退与复制动作。',
-          list: ['可重置、带版本号的工作区布局', '可搜索的 FITS Header 对话框', '自定义 dock 标题栏与原生浮动窗口控件'],
+          t: '图像比较',
+          d: '选择两个已加载帧，以共享显示区间进行比较；既可直接按像素，也可通过有界的最近邻 WCS 对齐。',
+          list: ['并排 · 闪烁 · A − B 差分', '自动、直接像素或 WCS 对齐', '可取消的后台比较与输出预算'],
         },
         {
           n: '06',
-          t: '性能',
-          d: 'AstroView 结合安全的内存映射分离、延迟导入、区间子采样与全局 single-flight 加载、渲染和背景 worker，使重复操作始终保持有界。',
-          list: ['全局 single-flight worker 与协作式取消', '区间估计子采样到约 1000x1000', '精确的 win-64 URL+SHA 发布锁'],
+          t: '源提取 (SEP)',
+          d: '在全图或右键拖选 ROI 上运行 SEP，自定义检测与背景参数，并在保持界面响应的同时查看目录和切图。',
+          list: ['全图与 ROI 提取', '可取消的子进程执行', 'Intensity · Background · Residual · Connected Region'],
+        },
+        {
+          n: '07',
+          t: '多帧与工作区',
+          d: '播放、循环、往返或逐帧查看有序 FITS 序列，同时保留常用 dock 布局、可搜索 Header、源表和会话状态。',
+          list: ['向当前会话追加帧', '后台优先生成预览', '版本化工作区与结构化 Header 查看器'],
+        },
+        {
+          n: '08',
+          t: '性能与安全',
+          d: '新的测量、星表、区域和比较路径均设置明确的文件、网络、像素、内存、行数、几何与取消预算。',
+          list: ['请求安全的 single-flight worker', '有界远程与本地输入', '精确的 win-64 URL+SHA 发布环境锁'],
         },
       ],
     },
@@ -34714,6 +34744,7 @@ const I18N = {
       title: '版本说明',
       desc: '先看最近版本的摘要，再向下浏览按版本整理的精简更新历史。',
       summaryByVersion: {
+        '1.8.0': 'AstroView 1.8.0 新增轻量科学分析层：ROI 统计与孔径测光、带有界盖亚 DR3 叠加的 WCS 网格、安全的 DS9 Region 导入/导出，以及已加载帧之间的并排、闪烁和差分比较。',
         '1.7.5': '这是一个以安全为重点的版本：在分配内存前限制 FITS 解码，拒绝不安全的整文件压缩和不受支持的 HDU，阻止过期或已取消的 worker 结果写回界面，并通过精确锁与 SHA-256 校验加固可复现的 Windows 发布。',
         '1.7.4': '通过移除重复的预览与区间计算，首图加载和逐帧渲染进一步提速；Windows 冻结构建现在能够正确初始化多进程并可靠收集本地模块。',
         '1.7.3': 'Windows 打包改为优先使用 OpenBLAS，并在打包阶段自动识别当前 BLAS 后端，使安装包缩小到约 47 MB。同时修复了在包目录内运行 `python -m astroview` 时 Windows 上额外弹出空窗口的问题。',
@@ -34741,7 +34772,7 @@ const I18N = {
         {
           t: '或直接安装发布版',
           d: 'Windows 安装包与 SHA256SUMS.txt 均由经过验证的 GitHub release 工作流生成。',
-          code: '$ .\\AstroView_Setup_1.7.5.exe\n# 校验 SHA256SUMS.txt 后，从开始菜单启动。',
+          code: '$ .\\AstroView_Setup_1.8.0.exe\n# 校验 SHA256SUMS.txt 后，从开始菜单启动。',
         },
       ],
     },
@@ -34752,11 +34783,15 @@ const I18N = {
       rows: [
         { k: '运行环境', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep（必需）'] },
         { k: '操作系统', v: 'Windows 10/11、macOS 12+、Linux（X11 / Wayland）', tags: [] },
-        { k: '文件格式', v: '支持单文件或多 HDU 文件中的 FITS 图像 HDU（.fits / .fit / .fts）：二维图像与有界数据立方体；拒绝空、表格和一维 HDU。可导出为：', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: '文件格式', v: '支持单文件或多 HDU 文件中的 FITS 图像 HDU（.fits / .fit / .fts）：二维图像与有界数据立方体；拒绝空、表格和一维 HDU。互操作与导出格式包括：', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV', 'DS9 .reg'] },
         { k: '安全限制', v: '桌面端默认限制：8192² 总像素、512 MiB 预计解码数据和 4096 帧。', tags: [] },
         { k: '压缩格式', v: '限制范围内继续支持 FITS 分块压缩（CompImageHDU）；整文件 gzip/ZIP/bzip2/xz/LZW 必须先安全解压。', tags: [] },
         { k: '拉伸模式', v: '', tags: ['Linear', 'Log', 'Asinh', 'Sqrt'] },
         { k: '区间模式', v: '', tags: ['ZScale', 'MinMax', '99.5%', '99%', '98%', '95%', 'Manual'] },
+        { k: '测量', v: '有界 ROI 统计与圆形孔径测光，包含背景环、误差、信噪比、质心和 FWHM。', tags: [] },
+        { k: 'WCS 与星表', v: '投影后的 RA/Dec 网格，以及可配置半径、返回数量与暗端 G 星等限制的有界盖亚 DR3 锥形检索。', tags: [] },
+        { k: 'DS9 Region', v: '安全导入/导出 Region 4.1；支持 image、physical、fk5、icrs 坐标和 circle、box、ellipse、polygon、point 图形。', tags: [] },
+        { k: '图像比较', v: '并排、闪烁与 A − B 差分，支持直接像素对齐或有界最近邻 WCS 对齐。', tags: [] },
         { k: '坐标输入', v: '支持像素坐标 (x, y) 与 WCS 坐标 (RA, Dec)，兼顾单条输入与批量粘贴。', tags: [] },
         { k: '源提取', v: '基于 SEP，可调阈值、最小面积、反混叠与背景网格；支持全图或 ROI。', tags: [] },
         { k: '架构', v: 'Qt 无关的 `core/` 领域层加 `app/` UI 层，由 `MainWindow` 统一协调。', tags: [] },
@@ -34764,10 +34799,10 @@ const I18N = {
       ],
       download: {
         title: '下载 AstroView',
-        sub: 'v1.7.5 · 发布于 2026 年 7 月 25 日',
+        sub: 'v1.8.0 · 发布于 2026 年 7 月 25 日',
         items: [
-          { os: 'Win', title: 'AstroView_Setup_1.7.5.exe', meta: '安装包 · x64 · 50.8 MiB', href: SITE_META.installerUrl },
-          { os: 'SHA', title: 'SHA256SUMS.txt', meta: 'SHA-256 · 安装前请校验', href: SITE_META.checksumUrl },
+          { os: 'Win', title: SITE_META.installerName, meta: `安装包 · x64 · ${SITE_META.installerSizeLabel}`, href: SITE_META.installerUrl },
+          { os: 'SHA', title: 'SHA256SUMS.txt', meta: `SHA-256 · ${SITE_META.installerSha256}`, href: SITE_META.checksumUrl },
           { os: 'Rel', title: 'Release 页面', meta: 'GitHub 版本说明 · 校验信息 · 资产文件', href: SITE_META.latestReleaseUrl },
           { os: 'Env', title: 'environment-win-64.conda.lock', meta: '精确 Conda URL · 构建号 · SHA-256', href: SITE_META.environmentUrl },
         ],
@@ -34780,7 +34815,7 @@ const I18N = {
     },
     footer: {
       license: 'MIT 许可证',
-      note: '基于 PySide6 构建。页面版本数据已同步到 2026 年 7 月 25 日发布的 1.7.5。',
+      note: '基于 PySide6 构建。页面版本数据已同步到 2026 年 7 月 25 日发布的 1.8.0。',
       links: [
         { t: 'GitHub', h: SITE_META.repoUrl },
         { t: '最新 Release', h: SITE_META.latestReleaseUrl },
@@ -34795,6 +34830,47 @@ const I18N = {
 };
 
 const VERSIONS = [
+  {
+    v: '1.8.0', date: '2026-07-25',
+    groups: {
+      security: [
+        item(
+          'Keeps every new workflow bounded: DS9 input and output have byte, line, region, attribute, diagnostic, and vertex budgets; Gaia uses a fixed HTTPS endpoint with response, row, and time limits; measurement and comparison reject unsafe pixel and memory workloads.',
+          '为所有新工作流设置明确预算：DS9 输入与输出限制字节、行、区域、属性、诊断与顶点；盖亚使用固定 HTTPS 端点并限制响应、行数和时间；测量与比较会拒绝不安全的像素和内存工作量。'
+        ),
+      ],
+      added: [
+        item(
+          'Added a Measurement Workbench with ROI finite/invalid counts, min/max, mean, median, standard deviation, and sum, plus circular-aperture photometry with an annular background, net flux, uncertainty, SNR, centroid, FWHM, and canvas overlays.',
+          '新增测量工作台：提供 ROI 有限值/无效值计数、最小值/最大值、均值、中位数、标准差和总和，并支持带背景环的圆形孔径测光、净流量、不确定度、信噪比、质心、FWHM 与画布叠加。'
+        ),
+        item(
+          'Added a projected RA/Dec WCS grid and a bounded Gaia DR3 cone-search panel with radius, result-count, and faint-G controls, selectable catalog rows, and image-projected source markers.',
+          '新增投影后的 RA/Dec WCS 网格与有界盖亚 DR3 锥形检索面板，支持设置半径、返回数量与暗端 G 星等，并提供可选择目录行和投影到图像的源标记。'
+        ),
+        item(
+          'Added safe DS9 Region 4.1 import, overlay, and round-trip export for image, physical, fk5, and icrs coordinates; circle, box, ellipse, polygon, and point shapes; common labels and colors; and capture of the current ROI or aperture.',
+          '新增安全的 DS9 Region 4.1 导入、叠加与往返导出，支持 image、physical、fk5、icrs 坐标，circle、box、ellipse、polygon、point 图形，常用标签与颜色，并可捕获当前 ROI 或孔径。'
+        ),
+        item(
+          'Added loaded-frame comparison with side-by-side, blink, and A − B difference modes, shared display limits, automatic direct-pixel or bounded nearest-neighbour WCS alignment, and cancelable background processing.',
+          '新增已加载帧比较：支持并排、闪烁与 A − B 差分、共享显示区间、自动直接像素或有界最近邻 WCS 对齐，以及可取消的后台处理。'
+        ),
+      ],
+      changed: [
+        item(
+          'Measurement, WCS, catalog, and DS9 overlays now track the active frame and persistent D4 orientation, while stale frame-specific analysis is cleared or recomputed during navigation.',
+          '测量、WCS、星表与 DS9 叠加现在会跟随活动帧及持久化 D4 图像方向；切帧时会清除或重新计算过期的逐帧分析。'
+        ),
+      ],
+      validated: [
+        item(
+          'Added focused core, dock, worker, canvas, and MainWindow integration regression coverage for all four new analysis workflows and their resource-limit failure paths.',
+          '为四项新增分析工作流及其资源限制失败路径补充了核心、Dock、Worker、画布与 MainWindow 集成回归测试。'
+        ),
+      ],
+    },
+  },
   {
     v: '1.7.5', date: '2026-07-25',
     groups: {
