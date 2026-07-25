@@ -96,6 +96,26 @@
 
     initStarfield();
 
+    function Papers({ show, onClose, lang }) {
+      const papers = window.AV_PAPERS || [];
+      return (
+        <div className={'papers-panel' + (show ? ' show' : '')}>
+          <div className="papers-head">
+            <span>{lang === 'zh' ? '论文' : 'Papers'}</span>
+            <button className="papers-close" onClick={onClose} aria-label="close">×</button>
+          </div>
+          <div className="papers-list">
+            {papers.map((p, i) => (
+              <a key={i} className="papers-item" href={p.url} target="_blank" rel="noopener">
+                <div className="papers-item-title">{p.title}</div>
+                {p.meta && <div className="papers-item-meta">{p.meta} ↗</div>}
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     function Tweaks({ show, theme, setTheme, accent, setAccent, starfield, setStarfield, lang, setLang }) {
       const accents = [
         { k: 'blue', c: 'oklch(55% 0.15 250)' },
@@ -158,6 +178,7 @@
       const [starfield, setStarfield] = useState(!!d.starfield);
       const [tweaksOn, setTweaksOn] = useState(false);
       const [standalone, setStandalone] = useState(false);
+      const [papersOn, setPapersOn] = useState(false);
 
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -204,7 +225,7 @@
 
       return (
         <>
-          <window.AV_Nav t={t} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} />
+          <window.AV_Nav t={t} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} setPapersOn={setPapersOn} />
           <window.AV_Hero t={t} lang={lang} />
           <window.AV_Features t={t} />
           <window.AV_ReleaseNotes t={t} lang={lang} />
@@ -212,6 +233,7 @@
           <window.AV_Specs t={t} lang={lang} />
           <window.AV_ChangelogFull t={t} lang={lang} />
           <window.AV_Footer t={t} />
+          <Papers show={papersOn} onClose={() => setPapersOn(false)} lang={lang} />
           <Tweaks
             show={tweaksOn}
             theme={theme}

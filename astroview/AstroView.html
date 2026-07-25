@@ -23,6 +23,7 @@
   --accent: oklch(55% 0.15 250);
   --accent-fg: oklch(98% 0.004 80);
   --amber: oklch(68% 0.12 60);
+  --security: oklch(52% 0.18 20);
   --success: oklch(60% 0.12 150);
   --chip: oklch(94% 0.005 80);
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -41,6 +42,7 @@ html[data-theme="dark"] {
   --accent: oklch(68% 0.14 250);
   --accent-fg: oklch(15% 0.01 260);
   --amber: oklch(75% 0.13 60);
+  --security: oklch(72% 0.15 20);
   --chip: oklch(22% 0.012 260);
 }
 
@@ -224,8 +226,8 @@ section.tight { padding: 64px 0; }
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 72px;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 56px;
   align-items: center;
 }
 .hero-grid > * { min-width: 0; }
@@ -772,6 +774,7 @@ html[data-theme="dark"] .vg-frame { box-shadow: 0 30px 60px -30px oklch(0% 0 0 /
   letter-spacing: 0.1em;
 }
 .label-added { background: color-mix(in oklch, var(--accent) 14%, transparent); color: var(--accent); }
+.label-security { background: color-mix(in oklch, var(--security) 14%, transparent); color: var(--security); }
 .label-fixed { background: color-mix(in oklch, var(--amber) 18%, transparent); color: var(--amber); }
 .label-changed { background: var(--chip); color: var(--fg); }
 
@@ -1045,6 +1048,125 @@ html[data-theme="dark"] .tweaks { box-shadow: 0 20px 60px -20px oklch(0% 0 0 / 0
 }
 .toggle.on { background: var(--accent); }
 .toggle.on::after { left: 18px; }
+
+/* Papers panel */
+.papers-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 110;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px -20px oklch(20% 0.01 260 / 0.25);
+  padding: 18px 20px;
+  font-size: 13px;
+  display: none;
+}
+html[data-theme="dark"] .papers-panel { box-shadow: 0 20px 60px -20px oklch(0% 0 0 / 0.6); }
+.papers-panel.show { display: block; }
+.papers-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--fg-3);
+  margin-bottom: 14px;
+}
+.papers-close {
+  background: transparent; border: none; cursor: pointer;
+  color: var(--fg-3); font-size: 16px; line-height: 1;
+  padding: 2px 6px; border-radius: 4px;
+}
+.papers-close:hover { color: var(--fg); background: var(--bg-2); }
+.papers-list { display: flex; flex-direction: column; gap: 8px; }
+.papers-item {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--fg);
+  transition: all 0.15s;
+}
+.papers-item:hover { border-color: var(--line-2); background: var(--bg-2); }
+.papers-item-title { font-size: 13px; font-weight: 500; word-break: break-all; }
+.papers-item-meta { font-family: var(--mono); font-size: 10px; color: var(--fg-3); margin-top: 4px; letter-spacing: 0.05em; }
+
+/* Mobile nav toggle (hidden on desktop) */
+.nav-toggle {
+  display: none;
+  width: 34px; height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-toggle:hover { color: var(--fg); border-color: var(--line-2); background: var(--bg-2); }
+
+/* Mobile pass: ≤640px only — desktop layout untouched above this */
+@media (max-width: 640px) {
+  .nav-toggle { display: inline-flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 6px 24px 14px;
+    background: color-mix(in oklch, var(--bg) 96%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a {
+    padding: 12px 4px;
+    font-size: 15px;
+    border-top: 1px solid var(--line);
+  }
+  .nav-links a:first-child { border-top: none; }
+
+  section { padding: 56px 0; }
+  section.tight { padding: 40px 0; }
+
+  .hero { padding: 48px 0 32px; }
+  .hero-title { font-size: clamp(30px, 8vw, 44px); margin: 14px 0 18px; }
+  .hero-desc { font-size: 16px; }
+  .hero-cta { margin-top: 28px; }
+  .hero-meta { gap: 18px 24px; margin-top: 32px; padding-top: 22px; }
+  .hero-meta-val { font-size: 18px; }
+
+  .section-title { font-size: clamp(24px, 6.4vw, 34px); }
+  .section-desc { font-size: 15px; }
+
+  .feat-grid { margin-top: 36px; }
+  .feat { padding: 24px 22px; }
+
+  .release-header { gap: 18px; margin-bottom: 32px; }
+  .release-meta .version-big { font-size: 34px; }
+
+  .spec-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 14px 0;
+  }
+
+  .step { padding: 22px 18px; }
+  .download-card { padding: 24px 20px; }
+
+  .footer { padding: 36px 0 40px; }
+  .footer-inner { gap: 14px; }
+  .footer-links { flex-wrap: wrap; gap: 12px 18px; }
+}
 
 /* Utility */
 .fade-in { opacity: 0; transform: translateY(8px); animation: fadeIn 0.5s forwards; }
@@ -34346,36 +34468,45 @@ var e,t,r="function"==typeof Symbol?Symbol:{},a=r.iterator||"@@iterator",n=r.toS
 // AstroView landing page data, synced to upstream fitson changelog/release info.
 
 const SITE_META = {
-  latestVersion: '1.7.3',
-  latestReleaseDate: '2026-04-21',
-  installerName: 'AstroView_Setup_1.7.3.exe',
-  installerSizeLabel: '47 MB',
+  latestVersion: '1.7.5',
+  latestReleaseDate: '2026-07-25',
+  installerName: 'AstroView_Setup_1.7.5.exe',
+  installerSizeLabel: '50.8 MiB',
   repoUrl: 'https://github.com/carryons6/fitson',
-  releasesUrl: 'https://github.com/carryons6/fitson/releases',
-  latestReleaseUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.7.3',
+  releasesUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.7.5',
+  latestReleaseUrl: 'https://github.com/carryons6/fitson/releases/tag/v1.7.5',
   changelogUrl: 'https://github.com/carryons6/fitson/blob/main/CHANGELOG.md',
-  environmentUrl: 'https://github.com/carryons6/fitson/blob/main/environment.yml',
-  installerUrl: 'https://github.com/carryons6/fitson/releases/download/v1.7.3/AstroView_Setup_1.7.3.exe',
+  environmentUrl: 'https://github.com/carryons6/fitson/blob/main/environment-win-64.conda.lock',
+  installerUrl: 'https://github.com/carryons6/fitson/releases/download/v1.7.5/AstroView_Setup_1.7.5.exe',
+  checksumUrl: 'https://github.com/carryons6/fitson/releases/download/v1.7.5/SHA256SUMS.txt',
 };
+
+const PAPERS = [
+  {
+    title: 'DOI: 10.3847/1538-3881/ae4c85',
+    meta: 'The Astronomical Journal · IOPscience',
+    url: 'https://iopscience.iop.org/article/10.3847/1538-3881/ae4c85',
+  },
+];
 
 const item = (en, zh) => (zh ? { en, zh } : { en });
 
 const I18N = {
   en: {
-    nav: { features: 'Features', release: 'Release Notes', changelog: 'Changelog', download: 'Download' },
+    nav: { features: 'Features', release: 'Release Notes', changelog: 'Changelog', download: 'Download', papers: 'Papers' },
     hero: {
       eyebrow: 'FITS viewer · PySide6',
       title_a: 'A fast, precise FITS viewer for',
       title_em: 'astronomical imaging',
       title_b: '.',
-      desc: 'Open single-frame or multi-HDU FITS files, inspect SEP background and residual views, mark pixel or WCS coordinates, and stay responsive on large datasets with memory-mapped loading plus background rendering.',
-      cta_download: 'Download v1.7.3',
+      desc: 'Open bounded FITS image HDUs and cubes, inspect SEP background and residual views, mark pixel or WCS coordinates, and stay responsive with request-safe single-flight workers.',
+      cta_download: 'Download v1.7.5',
       cta_github: 'View on GitHub',
       meta: [
-        { v: '1.7.3', l: 'Current release' },
+        { v: '1.7.5', l: 'Current release' },
         { v: '8x', l: 'D4 orientation transforms' },
         { v: '~300 ms', l: 'Cold-start startup' },
-        { v: '47 MB', l: 'Windows installer' },
+        { v: '50.8 MiB', l: 'Windows installer' },
       ],
     },
     features: {
@@ -34386,7 +34517,7 @@ const I18N = {
         {
           n: '01',
           t: 'Image Display',
-          d: 'Single-file and multi-HDU FITS loading, four stretch modes, six interval presets, fit / 100% view, wheel zoom, drag pan, and all 8 persistent D4 orientation transforms.',
+          d: 'Load two-dimensional FITS image HDUs and bounded image cubes from single- or multi-HDU files, with four stretch modes, six interval presets, and all 8 persistent D4 orientation transforms.',
           list: ['Linear · Log · Asinh · Sqrt', 'ZScale · MinMax · 99.5% · 99% · 98% · 95%', 'Original / BKG / Residual views with on-canvas compass'],
         },
         {
@@ -34416,8 +34547,8 @@ const I18N = {
         {
           n: '06',
           t: 'Performance',
-          d: 'AstroView leans on memmap loading, deferred heavy imports, subsampled interval calculation, and background workers to keep interaction responsive.',
-          list: ['memmap=True FITS loading', 'Subsample to ~1000x1000 for interval estimation', 'OpenBLAS-based Windows packaging for smaller installers'],
+          d: 'AstroView combines safe memory-map detachment, deferred imports, subsampled intervals, and global single-flight load, render, and background workers so repeated actions stay bounded.',
+          list: ['Global single-flight workers with cooperative cancellation', 'Subsample to ~1000x1000 for interval estimation', 'Exact win-64 URL+SHA release lock'],
         },
       ],
     },
@@ -34433,6 +34564,8 @@ const I18N = {
       title: 'Release notes',
       desc: 'Select a recent version for a quick summary, then scroll for the longer condensed history below.',
       summaryByVersion: {
+        '1.7.5': 'This security-focused release bounds FITS decoding before allocation, rejects unsafe whole-file compression wrappers and unsupported HDUs, prevents stale or canceled worker results from reaching the UI, and hardens reproducible Windows releases with exact locks and SHA-256 checksums.',
+        '1.7.4': 'First-image loading and frame rendering are faster after removing redundant preview and interval passes. Frozen Windows builds now initialize multiprocessing correctly and package local modules reliably.',
         '1.7.3': 'Windows packaging now prefers OpenBLAS and auto-detects the active BLAS backend, cutting the installer to roughly 47 MB. It also fixes a Windows-only empty-window bug when `python -m astroview` is launched from inside the package directory.',
         '1.7.2': 'SEP ROI extraction is back on the fast path for normal selections, cancel/shutdown behavior is stable again, and a Chinese blank-label issue in Target Info Fields is fixed.',
         '1.7.1': 'The header viewer graduated into a structured FITS-header workflow with per-HDU switching, search, raw-text fallback, copy actions, and persistent UI state.',
@@ -34446,9 +34579,9 @@ const I18N = {
       desc: '',
       steps: [
         {
-          t: 'Create the environment',
-          d: 'The repository ships `environment.yml` with an OpenBLAS-oriented stack so Windows bundles stay small and reproducible.',
-          code: '$ conda env create -f environment.yml\n$ conda activate astroview',
+          t: 'Create the exact release environment',
+          d: 'The win-64 lock fixes every Conda artifact by URL, build, and SHA-256 for reproducible release builds.',
+          code: '$ conda create -n astroview-release --file environment-win-64.conda.lock\n$ conda activate astroview-release',
         },
         {
           t: 'Launch AstroView',
@@ -34457,8 +34590,8 @@ const I18N = {
         },
         {
           t: 'Or install the release build',
-          d: 'The latest Windows installer comes from the GitHub release workflow and matches the current landing-page release metadata.',
-          code: '$ .\\AstroView_Setup_1.7.3.exe\n# Then launch from Start menu.',
+          d: 'The Windows installer and SHA256SUMS.txt come from the verified GitHub release workflow.',
+          code: '$ .\\AstroView_Setup_1.7.5.exe\n# Verify SHA256SUMS.txt, then launch from Start menu.',
         },
       ],
     },
@@ -34467,9 +34600,11 @@ const I18N = {
       title: 'Requirements & supported formats.',
       desc: '',
       rows: [
-        { k: 'Runtime', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep (optional)'] },
+        { k: 'Runtime', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep (required)'] },
         { k: 'OS', v: 'Windows 10/11, macOS 12+, Linux (X11 / Wayland)', tags: [] },
-        { k: 'File formats', v: 'FITS (.fits, .fit, .fts) with multi-HDU support. Export targets include:', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: 'File formats', v: 'FITS image HDUs (.fits, .fit, .fts): 2D images and bounded cubes in single- or multi-HDU files. Empty, table, and 1D HDUs are rejected. Export targets include:', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: 'Safety limits', v: 'Desktop defaults: 8192² total pixels, 512 MiB estimated decoded data, and 4096 frames.', tags: [] },
+        { k: 'Compression', v: 'FITS tile compression (CompImageHDU) remains supported within the limits. Whole-file gzip/ZIP/bzip2/xz/LZW wrappers must be safely decompressed first.', tags: [] },
         { k: 'Stretch modes', v: '', tags: ['Linear', 'Log', 'Asinh', 'Sqrt'] },
         { k: 'Interval modes', v: '', tags: ['ZScale', 'MinMax', '99.5%', '99%', '98%', '95%', 'Manual'] },
         { k: 'Coordinate input', v: 'Pixel (x, y) and WCS (RA, Dec), with single-entry and batch-paste workflows.', tags: [] },
@@ -34479,11 +34614,12 @@ const I18N = {
       ],
       download: {
         title: 'Download AstroView',
-        sub: 'v1.7.3 · Released April 21, 2026',
+        sub: 'v1.7.5 · Released July 25, 2026',
         items: [
-          { os: 'Win', title: 'AstroView_Setup_1.7.3.exe', meta: 'Installer · x64 · ~47 MB', href: SITE_META.installerUrl },
+          { os: 'Win', title: 'AstroView_Setup_1.7.5.exe', meta: 'Installer · x64 · 50.8 MiB', href: SITE_META.installerUrl },
+          { os: 'SHA', title: 'SHA256SUMS.txt', meta: 'SHA-256 · verify before installation', href: SITE_META.checksumUrl },
           { os: 'Rel', title: 'Release page', meta: 'GitHub release notes · checksums · assets', href: SITE_META.latestReleaseUrl },
-          { os: 'Env', title: 'environment.yml', meta: 'conda-forge · OpenBLAS-oriented env', href: SITE_META.environmentUrl },
+          { os: 'Env', title: 'environment-win-64.conda.lock', meta: 'Exact Conda URLs · builds · SHA-256', href: SITE_META.environmentUrl },
         ],
       },
     },
@@ -34494,31 +34630,33 @@ const I18N = {
     },
     footer: {
       license: 'MIT License',
-      note: 'Built with PySide6. Landing-page release data synced through 1.7.3 on April 21, 2026.',
+      note: 'Built with PySide6. Landing-page release data synced through 1.7.5 on July 25, 2026.',
       links: [
         { t: 'GitHub', h: SITE_META.repoUrl },
         { t: 'Latest Release', h: SITE_META.latestReleaseUrl },
         { t: 'Releases', h: SITE_META.releasesUrl },
         { t: 'CHANGELOG.md', h: SITE_META.changelogUrl },
+        { t: 'SHA256SUMS.txt', h: SITE_META.checksumUrl },
+        { t: 'feedback@astroview.org', h: 'mailto:feedback@astroview.org' },
       ],
     },
-    labels: { added: 'Added', fixed: 'Fixed', changed: 'Changed', validated: 'Validated' },
+    labels: { security: 'Security', added: 'Added', fixed: 'Fixed', changed: 'Changed', validated: 'Validated' },
   },
   zh: {
-    nav: { features: '功能', release: '版本更新', changelog: '更新历史', download: '下载' },
+    nav: { features: '功能', release: '版本更新', changelog: '更新历史', download: '下载', papers: '论文' },
     hero: {
       eyebrow: 'FITS 查看器 · PySide6',
       title_a: '面向',
       title_em: '天文成像',
       title_b: '的快速精确 FITS 查看器。',
-      desc: '支持单文件与多 HDU FITS、SEP 背景/残差视图、像素与 WCS 坐标标记，以及面向大数据集的内存映射加载与后台渲染。',
-      cta_download: '下载 v1.7.3',
+      desc: '支持有界的 FITS 图像 HDU 与数据立方体、SEP 背景/残差视图、像素与 WCS 坐标标记，并通过请求安全的 single-flight worker 保持响应。',
+      cta_download: '下载 v1.7.5',
       cta_github: '查看 GitHub',
       meta: [
-        { v: '1.7.3', l: '当前版本' },
+        { v: '1.7.5', l: '当前版本' },
         { v: '8x', l: 'D4 图像方向变换' },
         { v: '~300 ms', l: '冷启动时间' },
-        { v: '47 MB', l: 'Windows 安装包' },
+        { v: '50.8 MiB', l: 'Windows 安装包' },
       ],
     },
     features: {
@@ -34529,7 +34667,7 @@ const I18N = {
         {
           n: '01',
           t: '图像显示',
-          d: '支持单文件与多 HDU FITS，提供四种拉伸、六种区间预设、适应窗口/100% 视图、滚轮缩放、拖拽平移，以及 8 种持久化 D4 图像方向变换。',
+          d: '支持单文件或多 HDU 文件中的二维 FITS 图像 HDU 与有界数据立方体，提供四种拉伸、六种区间预设，以及 8 种持久化 D4 图像方向变换。',
           list: ['Linear · Log · Asinh · Sqrt', 'ZScale · MinMax · 99.5% · 99% · 98% · 95%', '原图 / 背景 / 残差视图与画布指南针'],
         },
         {
@@ -34559,8 +34697,8 @@ const I18N = {
         {
           n: '06',
           t: '性能',
-          d: 'AstroView 依靠 memmap 加载、延迟重型依赖导入、子采样区间估计与后台 worker 维持大数据下的流畅体验。',
-          list: ['memmap=True FITS 加载', '区间估计子采样到约 1000x1000', '基于 OpenBLAS 的 Windows 打包，安装包更小'],
+          d: 'AstroView 结合安全的内存映射分离、延迟导入、区间子采样与全局 single-flight 加载、渲染和背景 worker，使重复操作始终保持有界。',
+          list: ['全局 single-flight worker 与协作式取消', '区间估计子采样到约 1000x1000', '精确的 win-64 URL+SHA 发布锁'],
         },
       ],
     },
@@ -34576,6 +34714,8 @@ const I18N = {
       title: '版本说明',
       desc: '先看最近版本的摘要，再向下浏览按版本整理的精简更新历史。',
       summaryByVersion: {
+        '1.7.5': '这是一个以安全为重点的版本：在分配内存前限制 FITS 解码，拒绝不安全的整文件压缩和不受支持的 HDU，阻止过期或已取消的 worker 结果写回界面，并通过精确锁与 SHA-256 校验加固可复现的 Windows 发布。',
+        '1.7.4': '通过移除重复的预览与区间计算，首图加载和逐帧渲染进一步提速；Windows 冻结构建现在能够正确初始化多进程并可靠收集本地模块。',
         '1.7.3': 'Windows 打包改为优先使用 OpenBLAS，并在打包阶段自动识别当前 BLAS 后端，使安装包缩小到约 47 MB。同时修复了在包目录内运行 `python -m astroview` 时 Windows 上额外弹出空窗口的问题。',
         '1.7.2': 'SEP 的 ROI 提取恢复到正常速度，取消/退出流程重新稳定，同时修复了中文环境下 Target Info Fields 空白标签的问题。',
         '1.7.1': 'Header 查看器升级为结构化 FITS Header 工作流，支持按 HDU 切换、搜索、原始文本回退、复制动作与持久化界面状态。',
@@ -34589,9 +34729,9 @@ const I18N = {
       desc: '',
       steps: [
         {
-          t: '创建环境',
-          d: '仓库提供了带 OpenBLAS 倾向的 `environment.yml`，便于复现环境并保持 Windows 安装包体积更小。',
-          code: '$ conda env create -f environment.yml\n$ conda activate astroview',
+          t: '创建精确发布环境',
+          d: 'win-64 锁文件按 URL、构建号和 SHA-256 固定每个 Conda 包，用于可复现的发布构建。',
+          code: '$ conda create -n astroview-release --file environment-win-64.conda.lock\n$ conda activate astroview-release',
         },
         {
           t: '启动 AstroView',
@@ -34600,8 +34740,8 @@ const I18N = {
         },
         {
           t: '或直接安装发布版',
-          d: '最新 Windows 安装包由 GitHub release 工作流生成，与当前页面展示的版本保持一致。',
-          code: '$ .\\AstroView_Setup_1.7.3.exe\n# 然后从开始菜单启动。',
+          d: 'Windows 安装包与 SHA256SUMS.txt 均由经过验证的 GitHub release 工作流生成。',
+          code: '$ .\\AstroView_Setup_1.7.5.exe\n# 校验 SHA256SUMS.txt 后，从开始菜单启动。',
         },
       ],
     },
@@ -34610,9 +34750,11 @@ const I18N = {
       title: '运行要求与支持格式。',
       desc: '',
       rows: [
-        { k: '运行环境', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep（可选）'] },
+        { k: '运行环境', v: 'Python 3.10+', tags: ['PySide6', 'astropy', 'numpy', 'sep（必需）'] },
         { k: '操作系统', v: 'Windows 10/11、macOS 12+、Linux（X11 / Wayland）', tags: [] },
-        { k: '文件格式', v: '支持多 HDU 的 FITS（.fits / .fit / .fts），并可导出为：', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: '文件格式', v: '支持单文件或多 HDU 文件中的 FITS 图像 HDU（.fits / .fit / .fts）：二维图像与有界数据立方体；拒绝空、表格和一维 HDU。可导出为：', tags: ['PNG', 'EPS', 'PDF', 'FITS', 'CSV'] },
+        { k: '安全限制', v: '桌面端默认限制：8192² 总像素、512 MiB 预计解码数据和 4096 帧。', tags: [] },
+        { k: '压缩格式', v: '限制范围内继续支持 FITS 分块压缩（CompImageHDU）；整文件 gzip/ZIP/bzip2/xz/LZW 必须先安全解压。', tags: [] },
         { k: '拉伸模式', v: '', tags: ['Linear', 'Log', 'Asinh', 'Sqrt'] },
         { k: '区间模式', v: '', tags: ['ZScale', 'MinMax', '99.5%', '99%', '98%', '95%', 'Manual'] },
         { k: '坐标输入', v: '支持像素坐标 (x, y) 与 WCS 坐标 (RA, Dec)，兼顾单条输入与批量粘贴。', tags: [] },
@@ -34622,11 +34764,12 @@ const I18N = {
       ],
       download: {
         title: '下载 AstroView',
-        sub: 'v1.7.3 · 发布于 2026 年 4 月 21 日',
+        sub: 'v1.7.5 · 发布于 2026 年 7 月 25 日',
         items: [
-          { os: 'Win', title: 'AstroView_Setup_1.7.3.exe', meta: '安装包 · x64 · 约 47 MB', href: SITE_META.installerUrl },
+          { os: 'Win', title: 'AstroView_Setup_1.7.5.exe', meta: '安装包 · x64 · 50.8 MiB', href: SITE_META.installerUrl },
+          { os: 'SHA', title: 'SHA256SUMS.txt', meta: 'SHA-256 · 安装前请校验', href: SITE_META.checksumUrl },
           { os: 'Rel', title: 'Release 页面', meta: 'GitHub 版本说明 · 校验信息 · 资产文件', href: SITE_META.latestReleaseUrl },
-          { os: 'Env', title: 'environment.yml', meta: 'conda-forge · 偏向 OpenBLAS 的环境定义', href: SITE_META.environmentUrl },
+          { os: 'Env', title: 'environment-win-64.conda.lock', meta: '精确 Conda URL · 构建号 · SHA-256', href: SITE_META.environmentUrl },
         ],
       },
     },
@@ -34637,19 +34780,87 @@ const I18N = {
     },
     footer: {
       license: 'MIT 许可证',
-      note: '基于 PySide6 构建。页面版本数据已同步到 2026 年 4 月 21 日发布的 1.7.3。',
+      note: '基于 PySide6 构建。页面版本数据已同步到 2026 年 7 月 25 日发布的 1.7.5。',
       links: [
         { t: 'GitHub', h: SITE_META.repoUrl },
         { t: '最新 Release', h: SITE_META.latestReleaseUrl },
         { t: 'Releases', h: SITE_META.releasesUrl },
         { t: 'CHANGELOG.md', h: SITE_META.changelogUrl },
+        { t: 'SHA256SUMS.txt', h: SITE_META.checksumUrl },
+        { t: 'feedback@astroview.org', h: 'mailto:feedback@astroview.org' },
       ],
     },
-    labels: { added: '新增', fixed: '修复', changed: '变更', validated: '验证' },
+    labels: { security: '安全', added: '新增', fixed: '修复', changed: '变更', validated: '验证' },
   },
 };
 
 const VERSIONS = [
+  {
+    v: '1.7.5', date: '2026-07-25',
+    groups: {
+      security: [
+        item(
+          'Rejects whole-file gzip/ZIP/bzip2/xz/LZW wrappers before decompression and enforces default pre-decode budgets of 8192² total pixels, 512 MiB, and 4096 frames while retaining bounded FITS tile-compression support.',
+          '在解压前拒绝整文件 gzip/ZIP/bzip2/xz/LZW 外层压缩，并实施 8192² 总像素、512 MiB 解码数据和 4096 帧的默认预解码预算，同时继续支持预算范围内的 FITS 分块压缩。'
+        ),
+        item(
+          'Moves generated theme icons to a randomized private cache and no longer overwrites the user’s default FITS file association during installation.',
+          '将动态生成的主题图标移入随机化的进程私有缓存，并停止在安装时覆盖用户现有的默认 FITS 文件关联。'
+        ),
+        item(
+          'Hardens releases with immutable Action SHAs, split permissions, an exact win-64 URL+SHA Conda lock, verified tool bootstraps, tag/version validation, SHA-256 checksums, and a frozen-executable smoke test.',
+          '通过不可变 Action SHA、权限分离、精确 win-64 URL+SHA Conda 锁、工具引导程序校验、标签/版本校验、SHA-256 校验和及冻结 EXE smoke test 加固发布链。'
+        ),
+      ],
+      fixed: [
+        item(
+          'Makes FITS loads and update checks request-safe so stale signals cannot mutate newer requests; every worker-to-window callback now reaches the GUI thread safely.',
+          '使 FITS 加载与更新检查具备请求隔离，过期信号无法修改新请求；所有 worker 到窗口的回调都会安全进入 GUI 线程。'
+        ),
+        item(
+          'Rejects empty, table, and one-dimensional HDUs with readable errors, renders all-NaN/Inf frames as black, continues after optional preview failures, and safely detaches memory-mapped uint8 data.',
+          '以可读错误拒绝空、表格和一维 HDU，将全 NaN/Inf 帧渲染为黑色，在可选预览失败后继续加载，并安全分离内存映射的 uint8 数据。'
+        ),
+        item(
+          'Prevents deferred SEP work and stale overlays from surviving cancellation, frame switches, file close, or application shutdown.',
+          '防止延迟 SEP 任务和过期叠加层在取消、切帧、关闭文件或退出应用后继续落地。'
+        ),
+        item(
+          'Keeps background and residual work valid across unrelated renders, redispatches invalidated cutout work, reports failures visibly, and delays window destruction until active work finishes.',
+          '确保背景与残差任务不受无关渲染影响，为源切图重新派发已失效任务，明确显示失败，并在活动任务结束前延迟窗口销毁。'
+        ),
+        item(
+          'Coalesces repeated FITS loads, frame renders, and background computations into bounded global single-flight workers and rejects queued results after cancellation.',
+          '将重复 FITS 加载、帧渲染和背景计算合并为有界的全局 single-flight worker，并在取消后拒绝已排队结果。'
+        ),
+      ],
+    },
+  },
+  {
+    v: '1.7.4', date: '2026-05-11',
+    groups: {
+      changed: [
+        item(
+          'Reduced first-image load time by skipping redundant preview stages at or below the load-stage preview size.',
+          '跳过尺寸不高于加载阶段预览的重复渲染步骤，缩短首张图像的加载时间。'
+        ),
+        item(
+          'Computes the display interval once per frame and reuses it across preview and full-resolution passes.',
+          '每帧只计算一次显示区间，并在预览与全分辨率渲染之间复用。'
+        ),
+      ],
+      fixed: [
+        item(
+          'Fixed frozen Windows ROI SEP extraction by initializing multiprocessing before importing the GUI entry point.',
+          '通过在导入 GUI 入口前初始化多进程，修复 Windows 冻结构建中的 ROI SEP 提取失败。'
+        ),
+        item(
+          'Made source-tree imports and PyInstaller analysis reliable regardless of checkout directory name, and included the build tool in the Conda environment.',
+          '使源码导入与 PyInstaller 分析不再依赖检出目录名称，并将构建工具纳入 Conda 环境。'
+        ),
+      ],
+    },
+  },
   {
     v: '1.7.3', date: '2026-04-21',
     groups: {
@@ -34939,6 +35150,7 @@ const VERSIONS = [
 window.AV_SITE_META = SITE_META;
 window.AV_I18N = I18N;
 window.AV_VERSIONS = VERSIONS;
+window.AV_PAPERS = PAPERS;
 
   </script>
   <script>
@@ -35548,25 +35760,28 @@ window.HeaderDialog = HeaderDialog;
 /* global React, AV_VERSIONS, AV_SITE_META */
 
 const { useState: useStateS } = React;
-const groupOrder = ['added', 'fixed', 'changed', 'validated'];
+const groupOrder = ['security', 'added', 'fixed', 'changed', 'validated'];
 
 function pickVersionText(entry, lang) {
   return lang === 'en' ? entry.en : (entry.zh || entry.en);
 }
 
-function Nav({ t, lang, setLang, theme, setTheme }) {
+function Nav({ t, lang, setLang, theme, setTheme, setPapersOn }) {
+  const [mobileOpen, setMobileOpen] = useStateS(false);
+  const closeMobile = () => setMobileOpen(false);
   return React.createElement('nav', { className: 'nav' },
     React.createElement('div', { className: 'container nav-inner' },
-      React.createElement('a', { className: 'brand', href: '#top' },
+      React.createElement('a', { className: 'brand', href: '#top', onClick: closeMobile },
         React.createElement('span', { className: 'brand-mark' }, 'A'),
         React.createElement('span', { className: 'brand-name' }, 'AstroView'),
         React.createElement('span', { className: 'brand-version mono' }, `v${window.AV_SITE_META.latestVersion}`),
       ),
-      React.createElement('div', { className: 'nav-links' },
-        React.createElement('a', { href: '#features' }, t.nav.features),
-        React.createElement('a', { href: '#release' }, t.nav.release),
-        React.createElement('a', { href: '#changelog' }, t.nav.changelog),
-        React.createElement('a', { href: '#download' }, t.nav.download),
+      React.createElement('div', { className: 'nav-links' + (mobileOpen ? ' open' : '') },
+        React.createElement('a', { href: '#features', onClick: closeMobile }, t.nav.features),
+        React.createElement('a', { href: '#release', onClick: closeMobile }, t.nav.release),
+        React.createElement('a', { href: '#changelog', onClick: closeMobile }, t.nav.changelog),
+        React.createElement('a', { href: '#download', onClick: closeMobile }, t.nav.download),
+        React.createElement('a', { href: '#', onClick: (e) => { e.preventDefault(); closeMobile(); setPapersOn(true); } }, t.nav.papers),
       ),
       React.createElement('div', { className: 'nav-tools' },
         React.createElement('button', {
@@ -35594,6 +35809,18 @@ function Nav({ t, lang, setLang, theme, setTheme }) {
         },
           React.createElement('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'currentColor' },
             React.createElement('path', { d: 'M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.8-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.2-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.5 7.5 0 0 1 4 0C10.6 3 11.3 3.2 11.3 3.2c.5 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.2 0 3.1-1.9 3.8-3.6 4 .3.2.5.7.5 1.4v2.1c0 .2.1.5.6.4A8 8 0 0 0 8 0Z' }))),
+        React.createElement('button', {
+          className: 'nav-toggle',
+          onClick: () => setMobileOpen((o) => !o),
+          'aria-label': 'menu',
+          title: lang === 'zh' ? '菜单' : 'Menu',
+        },
+          React.createElement('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' },
+            mobileOpen
+              ? React.createElement('path', { d: 'M3 3 L13 13 M13 3 L3 13' })
+              : React.createElement('path', { d: 'M2 4 H14 M2 8 H14 M2 12 H14' }),
+          ),
+        ),
       ),
     ),
   );
@@ -35871,6 +36098,26 @@ const { useState, useEffect } = React;
 
     initStarfield();
 
+    function Papers({ show, onClose, lang }) {
+      const papers = window.AV_PAPERS || [];
+      return (
+        <div className={'papers-panel' + (show ? ' show' : '')}>
+          <div className="papers-head">
+            <span>{lang === 'zh' ? '论文' : 'Papers'}</span>
+            <button className="papers-close" onClick={onClose} aria-label="close">×</button>
+          </div>
+          <div className="papers-list">
+            {papers.map((p, i) => (
+              <a key={i} className="papers-item" href={p.url} target="_blank" rel="noopener">
+                <div className="papers-item-title">{p.title}</div>
+                {p.meta && <div className="papers-item-meta">{p.meta} ↗</div>}
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     function Tweaks({ show, theme, setTheme, accent, setAccent, starfield, setStarfield, lang, setLang }) {
       const accents = [
         { k: 'blue', c: 'oklch(55% 0.15 250)' },
@@ -35933,6 +36180,7 @@ const { useState, useEffect } = React;
       const [starfield, setStarfield] = useState(!!d.starfield);
       const [tweaksOn, setTweaksOn] = useState(false);
       const [standalone, setStandalone] = useState(false);
+      const [papersOn, setPapersOn] = useState(false);
 
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -35979,7 +36227,7 @@ const { useState, useEffect } = React;
 
       return (
         <>
-          <window.AV_Nav t={t} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} />
+          <window.AV_Nav t={t} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} setPapersOn={setPapersOn} />
           <window.AV_Hero t={t} lang={lang} />
           <window.AV_Features t={t} />
           <window.AV_ReleaseNotes t={t} lang={lang} />
@@ -35987,6 +36235,7 @@ const { useState, useEffect } = React;
           <window.AV_Specs t={t} lang={lang} />
           <window.AV_ChangelogFull t={t} lang={lang} />
           <window.AV_Footer t={t} />
+          <Papers show={papersOn} onClose={() => setPapersOn(false)} lang={lang} />
           <Tweaks
             show={tweaksOn}
             theme={theme}

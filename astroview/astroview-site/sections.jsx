@@ -1,25 +1,28 @@
 /* global React, AV_VERSIONS, AV_SITE_META */
 
 const { useState: useStateS } = React;
-const groupOrder = ['added', 'fixed', 'changed', 'validated'];
+const groupOrder = ['security', 'added', 'fixed', 'changed', 'validated'];
 
 function pickVersionText(entry, lang) {
   return lang === 'en' ? entry.en : (entry.zh || entry.en);
 }
 
-function Nav({ t, lang, setLang, theme, setTheme }) {
+function Nav({ t, lang, setLang, theme, setTheme, setPapersOn }) {
+  const [mobileOpen, setMobileOpen] = useStateS(false);
+  const closeMobile = () => setMobileOpen(false);
   return React.createElement('nav', { className: 'nav' },
     React.createElement('div', { className: 'container nav-inner' },
-      React.createElement('a', { className: 'brand', href: '#top' },
+      React.createElement('a', { className: 'brand', href: '#top', onClick: closeMobile },
         React.createElement('span', { className: 'brand-mark' }, 'A'),
         React.createElement('span', { className: 'brand-name' }, 'AstroView'),
         React.createElement('span', { className: 'brand-version mono' }, `v${window.AV_SITE_META.latestVersion}`),
       ),
-      React.createElement('div', { className: 'nav-links' },
-        React.createElement('a', { href: '#features' }, t.nav.features),
-        React.createElement('a', { href: '#release' }, t.nav.release),
-        React.createElement('a', { href: '#changelog' }, t.nav.changelog),
-        React.createElement('a', { href: '#download' }, t.nav.download),
+      React.createElement('div', { className: 'nav-links' + (mobileOpen ? ' open' : '') },
+        React.createElement('a', { href: '#features', onClick: closeMobile }, t.nav.features),
+        React.createElement('a', { href: '#release', onClick: closeMobile }, t.nav.release),
+        React.createElement('a', { href: '#changelog', onClick: closeMobile }, t.nav.changelog),
+        React.createElement('a', { href: '#download', onClick: closeMobile }, t.nav.download),
+        React.createElement('a', { href: '#', onClick: (e) => { e.preventDefault(); closeMobile(); setPapersOn(true); } }, t.nav.papers),
       ),
       React.createElement('div', { className: 'nav-tools' },
         React.createElement('button', {
@@ -47,6 +50,18 @@ function Nav({ t, lang, setLang, theme, setTheme }) {
         },
           React.createElement('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'currentColor' },
             React.createElement('path', { d: 'M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.8-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.2-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.5 7.5 0 0 1 4 0C10.6 3 11.3 3.2 11.3 3.2c.5 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.2 0 3.1-1.9 3.8-3.6 4 .3.2.5.7.5 1.4v2.1c0 .2.1.5.6.4A8 8 0 0 0 8 0Z' }))),
+        React.createElement('button', {
+          className: 'nav-toggle',
+          onClick: () => setMobileOpen((o) => !o),
+          'aria-label': 'menu',
+          title: lang === 'zh' ? '菜单' : 'Menu',
+        },
+          React.createElement('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' },
+            mobileOpen
+              ? React.createElement('path', { d: 'M3 3 L13 13 M13 3 L3 13' })
+              : React.createElement('path', { d: 'M2 4 H14 M2 8 H14 M2 12 H14' }),
+          ),
+        ),
       ),
     ),
   );
